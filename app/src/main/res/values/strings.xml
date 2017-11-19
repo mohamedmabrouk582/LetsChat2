@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Lets Chat</string>
+    <string name="todo">TODO</string>
+    <string name="friends">Friends</string>
+    <string name="requests">Requests</string>
+    <string name="chat">Chat</string>
+    <string name="email_hint">Enter your Email</string>
+    <string name="login">Login</string>
+    <string name="createAccount">Create Account</string>
+    <string name="register">Register</string>
+    <string name="username_hint">User name</string>
+    <string name="singup">Sign Up</string>
+    <string name="password_hint">Enter your Password</string>
+    <string name="logout">Logout</string>
+    <string name="settings">Setting Profile</string>
+    <string name="all_friends">All Friends</string>
+    <string name="title_activity_homes">HomesActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+       id="@+id/tab_friends"
+        icon="@drawable/friends"
+        title="@string/friends"
+        barColorWhenSelected="#0387d1"/>
+
+    <tab
+        id="@+id/tab_chat"
+        icon="@drawable/chat"
+        title="@string/chat"
+        barColorWhenSelected="#009c41" />
+
+
+    <tab
+        id="@+id/tab_requests"
+        icon="@drawable/requests"
+        title="Favorites"
+        barColorWhenSelected="#009b90" />
+</tabs>
+
