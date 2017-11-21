@@ -1,20 +1,25 @@
-package com.example.mohamed.letschat.presenter;
+package com.example.mohamed.letschat.presenter.register;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.example.mohamed.letschat.activity.HomesActivity;
+import com.example.mohamed.letschat.activity.HomeActivity;
+import com.example.mohamed.letschat.application.DataManger;
 import com.example.mohamed.letschat.application.MyApp;
+import com.example.mohamed.letschat.presenter.base.BasePresenter;
 import com.example.mohamed.letschat.utils.utils;
 import com.example.mohamed.letschat.view.RegisterView;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by mohamed mabrouk
@@ -26,14 +31,18 @@ public class RegisterViewPresenter<v extends RegisterView> extends BasePresenter
     private View view;
     private Activity activity;
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabaseReference;
+    private DataManger dataManger;
 
     public RegisterViewPresenter(View view,Activity  activity){
         this.activity=activity;
         this.view=view;
         mAuth= MyApp.getmAuth();
+        mDatabaseReference=MyApp.getDatabaseReference();
+        dataManger=((MyApp) activity.getApplication()).getDataManger();
     }
     @Override
-    public void register(String userName, String email, String password) {
+    public void register(final String userName, final String email, String password) {
         if(TextUtils.isEmpty(userName)){
             getView().showError("user name  not be empty");
         } else if (TextUtils.isEmpty(password)){
@@ -42,7 +51,7 @@ public class RegisterViewPresenter<v extends RegisterView> extends BasePresenter
                        getView().showError("password must be > 6 ");
         } else if (!utils.isEmailValid(email)){
                         getView().showError("your email not valid ");
-        }else {
+        } else {
           getView().showProgress();
           mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
               @Override
@@ -50,15 +59,34 @@ public class RegisterViewPresenter<v extends RegisterView> extends BasePresenter
                   getView().hideProgress();
 
                   if (task.isSuccessful()){
-                      FirebaseUser user = mAuth.getCurrentUser();
-                      HomesActivity.Start(activity);
-                      activity.finish();
-
-                      }else {
+                      addTODataBase(task.getResult().getUser().getUid(),userName,email);
+                  }else {
                      getView().showError(task.getException().getMessage());
                   }
               }
           });
         }
     }
+
+
+    private void addTODataBase(String root,final String name , final String email ){
+        Map<String,String> map=new HashMap<>();
+        map.put("name",name);
+        map.put("email",email);
+        map.put("imageUrl","default");
+        map.put("status","I am Use Let's Chat");
+        DatabaseReference reference=mDatabaseReference.child("Users").child(root);
+        reference.setValue(map).
+                addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        dataManger.clear();
+                        dataManger.setUser(name,email,"default","I am Use Let's Chat");
+                        HomeActivity.Start(activity,dataManger.getUser());
+                        activity.finish();
+                    }
+                });
+    }
+
+
 }

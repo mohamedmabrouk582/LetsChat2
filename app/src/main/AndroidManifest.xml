@@ -20,7 +20,7 @@
               <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.RegisterActivity" />
         <activity
-            android:name=".activity.HomesActivity"
+            android:name=".activity.HomeActivity"
             android:label="@string/title_activity_homes"
             android:theme="@style/AppTheme"></activity>
     </application>

@@ -1,8 +1,12 @@
-package com.example.mohamed.letschat.presenter;
+package com.example.mohamed.letschat.presenter.home;
 
-import android.support.v4.app.Fragment;
+import android.net.Uri;
+import android.view.View;
 
+import com.example.mohamed.letschat.presenter.base.MainPresenter;
 import com.example.mohamed.letschat.view.HomeView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by mohamed mabrouk
@@ -13,5 +17,6 @@ import com.example.mohamed.letschat.view.HomeView;
 public interface HomePresenter<v extends HomeView> extends MainPresenter<v> {
     void allFriends();
     void settingsProfile();
+    void edtIMG(Uri uri, CircleImageView view);
     void logout();
 }

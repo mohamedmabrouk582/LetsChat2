@@ -7,13 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.mohamed.letschat.R;
-import com.example.mohamed.letschat.activity.HomeActivity;
-import com.example.mohamed.letschat.activity.LoginActivity;
-import com.example.mohamed.letschat.data.User;
-import com.example.mohamed.letschat.presenter.SplashViewPresenter;
+import com.example.mohamed.letschat.application.DataManger;
+import com.example.mohamed.letschat.application.MyApp;
+import com.example.mohamed.letschat.presenter.splash.SplashViewPresenter;
 import com.example.mohamed.letschat.view.SplashView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,6 +27,7 @@ public class SplashFragment extends Fragment implements SplashView{
     private View view;
     private FirebaseAuth mAuth;
     private SplashViewPresenter presenter;
+    private DataManger dataManger;
 
     public static SplashFragment newFragment(){
         return new SplashFragment();
@@ -38,7 +37,12 @@ public class SplashFragment extends Fragment implements SplashView{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
        view=inflater.inflate(R.layout.splash_frgment,container,false);
        ini();
-        selectActivity();
+       new Handler().postDelayed(new Runnable() {
+           @Override
+           public void run() {
+               selectActivity();
+           }
+       },1000);
             return view;
      }
 
@@ -46,6 +50,7 @@ public class SplashFragment extends Fragment implements SplashView{
          presenter=new SplashViewPresenter(getActivity());
          presenter.attachView(this);
          mAuth=FirebaseAuth.getInstance();
+         dataManger=((MyApp) getActivity().getApplication()).getDataManger();
      }
 
 
@@ -53,8 +58,9 @@ public class SplashFragment extends Fragment implements SplashView{
     public void selectActivity() {
         FirebaseUser user=mAuth.getCurrentUser();
         if (user!=null){
-            presenter.openHomeActivity(new User());
+            presenter.openHomeActivity(dataManger.getUser());
         }else {
+            dataManger.clear();
             presenter.openLoginActivity();
         }
         getActivity().finish();

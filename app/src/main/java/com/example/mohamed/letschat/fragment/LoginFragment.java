@@ -4,19 +4,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.mohamed.letschat.R;
 import com.example.mohamed.letschat.activity.RegisterActivity;
-import com.example.mohamed.letschat.presenter.LoginViewPresenter;
+import com.example.mohamed.letschat.presenter.login.LoginViewPresenter;
 import com.example.mohamed.letschat.view.LoginView;
 
 /**

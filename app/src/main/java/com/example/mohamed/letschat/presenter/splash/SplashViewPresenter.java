@@ -1,11 +1,11 @@
-package com.example.mohamed.letschat.presenter;
+package com.example.mohamed.letschat.presenter.splash;
 
-import android.app.Activity;
 import android.content.Context;
 
-import com.example.mohamed.letschat.activity.HomesActivity;
+import com.example.mohamed.letschat.activity.HomeActivity;
 import com.example.mohamed.letschat.activity.LoginActivity;
 import com.example.mohamed.letschat.data.User;
+import com.example.mohamed.letschat.presenter.base.BasePresenter;
 import com.example.mohamed.letschat.view.SplashView;
 
 /**
@@ -27,6 +27,6 @@ public class SplashViewPresenter<v extends SplashView> extends BasePresenter<v> 
 
     @Override
     public void openHomeActivity(User user) {
-        HomesActivity.Start(context);
+        HomeActivity.Start(context,user);
     }
 }

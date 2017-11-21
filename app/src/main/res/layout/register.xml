@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:scrollbars="none"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,6 +22,7 @@
         android:textColor="@color/main_color"
         android:textSize="@dimen/_20sdp"
         />
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"

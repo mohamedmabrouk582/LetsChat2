@@ -1,5 +1,7 @@
 package com.example.mohamed.letschat.view;
 
+import android.net.Uri;
+
 /**
  * Created by mohamed mabrouk
  * 0201152644726

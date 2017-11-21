@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.example.mohamed.letschat.R;
 import com.example.mohamed.letschat.activity.LoginActivity;
-import com.example.mohamed.letschat.presenter.RegisterViewPresenter;
+import com.example.mohamed.letschat.presenter.register.RegisterViewPresenter;
 import com.example.mohamed.letschat.view.RegisterView;
 
 /**
@@ -89,8 +89,11 @@ public class RegisterFragment extends Fragment implements RegisterView,View.OnCl
                 login();
                 break;
             case R.id.but_register:
-                register(userName.getText().toString(),email.getText().toString(),password.getText().toString());
+              register(userName.getText().toString(),email.getText().toString(),password.getText().toString());
                 break;
+
         }
     }
+
+
 }

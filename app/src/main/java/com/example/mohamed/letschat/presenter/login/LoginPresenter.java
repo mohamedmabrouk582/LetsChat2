@@ -1,7 +1,6 @@
-package com.example.mohamed.letschat.presenter;
+package com.example.mohamed.letschat.presenter.login;
 
-import android.view.View;
-
+import com.example.mohamed.letschat.presenter.base.MainPresenter;
 import com.example.mohamed.letschat.view.LoginView;
 
 /**
