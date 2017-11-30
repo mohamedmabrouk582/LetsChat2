@@ -58,7 +58,7 @@ public class SplashFragment extends Fragment implements SplashView{
     public void selectActivity() {
         FirebaseUser user=mAuth.getCurrentUser();
         if (user!=null){
-            presenter.openHomeActivity(dataManger.getUser());
+            presenter.openHomeActivity();
         }else {
             dataManger.clear();
             presenter.openLoginActivity();

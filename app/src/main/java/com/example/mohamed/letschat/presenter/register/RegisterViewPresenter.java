@@ -82,7 +82,7 @@ public class RegisterViewPresenter<v extends RegisterView> extends BasePresenter
                     public void onSuccess(Void aVoid) {
                         dataManger.clear();
                         dataManger.setUser(name,email,"default","I am Use Let's Chat");
-                        HomeActivity.Start(activity,dataManger.getUser());
+                        HomeActivity.Start(activity);
                         activity.finish();
                     }
                 });

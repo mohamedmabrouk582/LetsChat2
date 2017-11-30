@@ -16,7 +16,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public interface HomePresenter<v extends HomeView> extends MainPresenter<v> {
     void allFriends();
-    void settingsProfile();
+
     void edtIMG(Uri uri, CircleImageView view);
     void logout();
 }

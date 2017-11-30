@@ -34,20 +34,23 @@ public class Myshard {
     }
 
     public void putName(String name){
+        editor.remove(NAME);
         editor.putString(NAME,name).apply();
     }
 
     public void putEmail(String email){
+        editor.remove(EMAIL);
         editor.putString(EMAIL,email).apply();
 
     }
 
     public void putIMG(String img){
+        editor.remove(IMG);
         editor.putString(IMG,img).apply();
-
     }
     public void putStatus(String status){
-        editor.putString(STATUS,status).apply();;
+        editor.remove(STATUS);
+        editor.putString(STATUS,status).apply();
     }
 
     public void clear(){

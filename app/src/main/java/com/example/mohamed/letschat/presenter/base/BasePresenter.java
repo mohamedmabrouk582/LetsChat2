@@ -1,5 +1,8 @@
 package com.example.mohamed.letschat.presenter.base;
 
+import android.support.design.widget.Snackbar;
+import android.view.View;
+
 import com.example.mohamed.letschat.view.MainView;
 
 /**
@@ -18,4 +21,13 @@ public class BasePresenter<v extends MainView> implements MainPresenter<v> {
     public void attachView(v view) {
         this.view=view;
     }
+
+    @Override
+    public void showSnakBar(String msg,View view) {
+        Snackbar snackbar = Snackbar
+                .make(view, msg, Snackbar.LENGTH_LONG);
+
+        snackbar.show();
+    }
+
 }

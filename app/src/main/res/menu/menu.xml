@@ -5,9 +5,7 @@
     <item android:title="@string/all_friends"
           android:id="@+id/all_friends"
         />
-    <item android:title="@string/settings"
-         android:id="@+id/setting_profile"
-        />
+
     <item android:title="@string/logout"
         android:id="@+id/logout"
         />

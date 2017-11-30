@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_margin="@dimen/_1sdp"
+            android:fitsSystemWindows="true"
+            android:layout_gravity="center"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_150sdp"
+            android:src="@drawable/logo"
+            android:scaleType="centerCrop"
+            android:id="@+id/other_user_img"
+            app:civ_border_color="@color/main_color"
+            app:civ_border_overlay="true"
+            app:civ_border_width="1px"
+            />
+
+    <TextView
+        android:id="@+id/other_user_status"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_gravity="center"
+        android:textSize="@dimen/_15sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="i am use let's chat"
+        />
+
+
+
+    <Button
+        android:layout_marginTop="@dimen/_80sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_25sdp"
+        android:layout_marginRight="@dimen/_25sdp"
+        android:background="@drawable/button_shape"
+        android:text="@string/edit_status"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:id="@+id/send_confirm_friend"
+        />
+
+    <Button
+        android:visibility="gone"
+        android:id="@+id/reject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_25sdp"
+        android:layout_marginRight="@dimen/_25sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:background="@drawable/button_shape"
+        android:text="@string/edit_status"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+
+
+
+
+
+
+
+
+</LinearLayout>

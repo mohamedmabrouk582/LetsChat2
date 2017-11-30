@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,9 +21,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.mohamed.letschat.R;
 import com.example.mohamed.letschat.adapter.PagerAdapter;
+import com.example.mohamed.letschat.application.DataManger;
+import com.example.mohamed.letschat.application.MyApp;
 import com.example.mohamed.letschat.data.User;
+import com.example.mohamed.letschat.fragment.ChangeStatusFragment;
 import com.example.mohamed.letschat.presenter.home.HomeViewPresenter;
 import com.example.mohamed.letschat.view.HomeView;
 import com.squareup.picasso.Callback;
@@ -40,9 +46,9 @@ public class HomeActivity extends AppCompatActivity
     private ImageView edtIMG;
     private TextView mProfilrName,mProfileEmail;
     private User mUser;
-    public static void Start(Context context,User user){
+    private DataManger dataManger;
+    public static void Start(Context context){
         Intent intent=new Intent(context,HomeActivity.class);
-        intent.putExtra(USER,user);
         context.startActivity(intent);
     }
 
@@ -63,7 +69,8 @@ public class HomeActivity extends AppCompatActivity
         iniHeadView(navigationView.getHeaderView(0));
 
         /**********/
-        mUser=getIntent().getParcelableExtra(USER);
+        dataManger=((MyApp) getApplication()).getDataManger();
+        mUser=dataManger.getUser();
         presenter=new HomeViewPresenter(this,navigationView.getHeaderView(0));
         presenter.attachView(this);
         ini();
@@ -88,16 +95,11 @@ public class HomeActivity extends AppCompatActivity
         mProfilrName.setText(data.getName());
         mProfileEmail.setText(data.getEmail());
         if (!data.getImageUrl().equals("default")){
-            Picasso.with(this).load(Uri.parse(data.getImageUrl())).placeholder(R.drawable.logo)
-                    .into(mProfileImge, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                        }
+            Log.d("sdsd", data.getImageUrl() + "");
+          //  mProfileImge.setImageURI(Uri.parse(data.getImageUrl()));
 
-                        @Override
-                        public void onError() {
-                        }
-                    });
+            Glide.with(this).load(data.getImageUrl()).error(R.drawable.logo)
+                    .into(mProfileImge);
         }
     }
 
@@ -127,9 +129,8 @@ public class HomeActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.all_friends:
+               presenter.allFriends();
 
-                return true;
-            case R.id.setting_profile:
                 return true;
             case R.id.logout:
                 presenter.logout();
@@ -144,18 +145,12 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch (id){
+            case    R.id.edit_status:
+                FragmentManager fragmentManager=getSupportFragmentManager();
+                ChangeStatusFragment  fragment=ChangeStatusFragment.newFragment();
+                fragment.show(fragmentManager,"changeStatus");
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

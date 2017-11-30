@@ -75,7 +75,7 @@ public class LoginViewPresenter<v extends LoginView> extends BasePresenter<v> im
                 User user=dataSnapshot.getValue(User.class);
                 dataManger.clear();
                 dataManger.setUser(user.getName(),user.getEmail(),user.getImageUrl(),user.getStatus());
-                HomeActivity.Start(activity,user);
+                HomeActivity.Start(activity);
                 activity.finish();
             }
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/custom_card_shadow"
+    android:gravity="center"
+    android:id="@+id/layout"
+    android:orientation="vertical"
+    android:padding="@dimen/_20sdp"
+    android:paddingTop="@dimen/_20sdp">
+
+    <EditText
+        android:hint="@string/your_status"
+        android:id="@+id/edt_status"
+        style="@style/edt_style_trans"
+        android:background="@drawable/edt_password"
+        android:paddingLeft="@dimen/_8sdp"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:gravity="center"/>
+
+
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/save"
+            android:layout_width="@dimen/_65sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/red_button_background"
+            android:text="save"
+            android:textColor="@color/white"/>
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="@dimen/_65sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/button_radius_green"
+            android:text="@string/cancel"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10sdp"/>
+
+
+    </LinearLayout>
+</LinearLayout>

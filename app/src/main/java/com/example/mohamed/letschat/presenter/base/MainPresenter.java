@@ -1,5 +1,7 @@
 package com.example.mohamed.letschat.presenter.base;
 
+import android.view.View;
+
 import com.example.mohamed.letschat.view.MainView;
 
 /**
@@ -10,4 +12,6 @@ import com.example.mohamed.letschat.view.MainView;
 
 public interface MainPresenter<v extends MainView> {
     void attachView(v View);
+    void showSnakBar(String msg,View view);
+
 }

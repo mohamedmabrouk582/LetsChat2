@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mohamed.letschat.R;
+import com.example.mohamed.letschat.activity.AllUsersActivity;
 import com.example.mohamed.letschat.activity.SplashActivity;
 import com.example.mohamed.letschat.application.DataManger;
 import com.example.mohamed.letschat.application.MyApp;
@@ -56,12 +57,10 @@ public class HomeViewPresenter<v extends HomeView> extends BasePresenter<v> impl
     @Override
     public void allFriends() {
         // go to all friends Activity
+        AllUsersActivity.Start(context);
     }
 
-    @Override
-    public void settingsProfile() {
-     // go to settings Activity
-    }
+
 
     @Override
     public void edtIMG(final Uri uri, final CircleImageView view) {
@@ -95,6 +94,7 @@ public class HomeViewPresenter<v extends HomeView> extends BasePresenter<v> impl
                           loadProgressBar.setVisibility(View.GONE);
                           txtLoad.setVisibility(View.GONE);
                           view.setImageURI(uri);
+                          //Picasso.with(context).load(taskSnapshot.getDownloadUrl()).into(view);
                       }
                   });
          }

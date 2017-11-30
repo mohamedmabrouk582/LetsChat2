@@ -23,6 +23,10 @@
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_homes"
             android:theme="@style/AppTheme"></activity>
+<activity android:name=".activity.AllUsersActivity"
+    android:theme="@style/AppThemeWithBar"
+    android:parentActivityName=".activity.HomeActivity"
+    />
     </application>
 
 </manifest>

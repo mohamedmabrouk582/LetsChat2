@@ -12,5 +12,5 @@ import com.example.mohamed.letschat.view.SplashView;
 
 public interface SplashPresenter<v extends SplashView> extends MainPresenter<v> {
     void openLoginActivity();
-    void openHomeActivity(User user);
+    void openHomeActivity();
 }
