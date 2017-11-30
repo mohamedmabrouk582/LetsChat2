@@ -3,21 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/zoomContainer"
     android:orientation="vertical">
-  <android.support.design.widget.TabLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/tabs"
-      android:background="@color/colorPrimary"
-      app:tabTextColor="@color/white"
-      app:tabSelectedTextColor="@color/main_color"
-      app:tabIndicatorColor="@color/white"
-      >
 
-  </android.support.design.widget.TabLayout>
+  <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/tabs_pager"
         ></android.support.v4.view.ViewPager>
+    <ImageView
+        android:id="@+id/img_preview"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:tabIndicatorColor="@color/white"
+        app:tabSelectedTextColor="@color/main_color"
+        app:tabTextColor="@color/white">
+
+    </android.support.design.widget.TabLayout>
+  </FrameLayout>
 </LinearLayout>

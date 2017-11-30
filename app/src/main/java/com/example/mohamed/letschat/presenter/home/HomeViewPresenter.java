@@ -63,7 +63,7 @@ public class HomeViewPresenter<v extends HomeView> extends BasePresenter<v> impl
 
 
     @Override
-    public void edtIMG(final Uri uri, final CircleImageView view) {
+    public void edtIMG(final Uri uri, final CircleImageView view, final update update) {
         loadProgressBar.setVisibility(View.VISIBLE);
         txtLoad.setVisibility(View.VISIBLE);
      String root="Users/"+mAuth.getCurrentUser().getUid()+"/";
@@ -91,6 +91,7 @@ public class HomeViewPresenter<v extends HomeView> extends BasePresenter<v> impl
                       @Override
                       public void onSuccess(Void aVoid) {
                          dataManger.setIMG(String.valueOf(taskSnapshot.getDownloadUrl()));
+                         update.sucess(dataManger.getUser());
                           loadProgressBar.setVisibility(View.GONE);
                           txtLoad.setVisibility(View.GONE);
                           view.setImageURI(uri);

@@ -3,6 +3,7 @@ package com.example.mohamed.letschat.presenter.home;
 import android.net.Uri;
 import android.view.View;
 
+import com.example.mohamed.letschat.data.User;
 import com.example.mohamed.letschat.presenter.base.MainPresenter;
 import com.example.mohamed.letschat.view.HomeView;
 
@@ -16,7 +17,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public interface HomePresenter<v extends HomeView> extends MainPresenter<v> {
     void allFriends();
+    interface update{
+        void sucess(User user);
+    }
 
-    void edtIMG(Uri uri, CircleImageView view);
+    void edtIMG(Uri uri, CircleImageView view,update update);
     void logout();
 }

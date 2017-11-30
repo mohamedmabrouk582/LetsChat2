@@ -1,13 +1,17 @@
 package com.example.mohamed.letschat.fragment;
 
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -48,7 +52,16 @@ public class ChangeStatusFragment extends DialogFragment implements ChangeStatus
         ini();
         presenrter=new ChangeStatusViewPresenrter(getActivity(),statusEditText,dialog,dataManger);
         presenrter.attachView(this);
+
         return dialog;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view= LayoutInflater.from(getActivity()).inflate(R.layout.edit_status,container,false);
+        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        return view;
     }
 
     private void ini(){

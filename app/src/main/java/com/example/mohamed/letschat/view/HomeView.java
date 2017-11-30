@@ -10,4 +10,5 @@ import android.support.v4.app.Fragment;
 
 public interface HomeView extends MainView {
   void editIMG();
+  void showIMG();
 }

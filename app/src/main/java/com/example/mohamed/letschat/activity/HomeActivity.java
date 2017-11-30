@@ -1,7 +1,13 @@
 package com.example.mohamed.letschat.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -17,7 +23,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +36,7 @@ import com.example.mohamed.letschat.application.DataManger;
 import com.example.mohamed.letschat.application.MyApp;
 import com.example.mohamed.letschat.data.User;
 import com.example.mohamed.letschat.fragment.ChangeStatusFragment;
+import com.example.mohamed.letschat.presenter.home.HomePresenter;
 import com.example.mohamed.letschat.presenter.home.HomeViewPresenter;
 import com.example.mohamed.letschat.view.HomeView;
 import com.squareup.picasso.Callback;
@@ -36,17 +45,21 @@ import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,HomeView {
+        implements NavigationView.OnNavigationItemSelectedListener,HomeView,View.OnClickListener {
     private static final String USER ="USER" ;
     private static final int IMG = 0;
     private HomeViewPresenter presenter;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private CircleImageView mProfileImge;
-    private ImageView edtIMG;
+    private ImageView edtIMG,img_preview;
     private TextView mProfilrName,mProfileEmail;
     private User mUser;
     private DataManger dataManger;
+    private Animator mCurrentAnimator;
+    private int mShortAnimationDuration;
+    private LinearLayout zoomContainer;
+    private DrawerLayout drawer;
     public static void Start(Context context){
         Intent intent=new Intent(context,HomeActivity.class);
         context.startActivity(intent);
@@ -58,7 +71,7 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_homes);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -83,12 +96,7 @@ public class HomeActivity extends AppCompatActivity
         mProfileImge=view.findViewById(R.id.profile_img);
         mProfilrName=view.findViewById(R.id.profile_name);
         edtIMG=view.findViewById(R.id.edit_img);
-        edtIMG.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editIMG();
-            }
-        });
+        edtIMG.setOnClickListener(this);
     }
 
     private void setData(User data){
@@ -106,8 +114,11 @@ public class HomeActivity extends AppCompatActivity
     private void ini(){
         mTabLayout=findViewById(R.id.tabs);
         mViewPager=findViewById(R.id.tabs_pager);
+        img_preview=findViewById(R.id.img_preview);
         mTabLayout.setupWithViewPager(mViewPager);
+        zoomContainer=findViewById(R.id.zoomContainer);
         mViewPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+        mProfileImge.setOnClickListener(this);
     }
     @Override
     public void onBackPressed() {
@@ -166,11 +177,152 @@ public class HomeActivity extends AppCompatActivity
         startActivityForResult(Intent.createChooser(intent,"Choose Your photo"),IMG);
     }
 
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode==IMG && resultCode==RESULT_OK){
-            presenter.edtIMG(data.getData(),mProfileImge);
+            presenter.edtIMG(data.getData(), mProfileImge, new HomePresenter.update() {
+                @Override
+                public void sucess(User user) {
+                    mUser=user;
+                }
+            });
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.edit_img:
+               editIMG();
+                break;
+            case R.id.profile_img:
+                showIMG();
+                break;
+        }
+    }
+
+    @Override
+    public void showIMG() {
+        drawer.closeDrawers();
+        zoomImageFromThumb(mProfileImge,mUser.getImageUrl());
+        mShortAnimationDuration = getResources().getInteger(
+                android.R.integer.config_shortAnimTime);
+    }
+
+    private void zoomImageFromThumb(final View thumbView, String imageResId){
+        if (mCurrentAnimator != null) {
+            mCurrentAnimator.cancel();
+        }
+        Glide.with(this).load(Uri.parse(imageResId))
+                .error(R.drawable.logo)
+                .into(img_preview);
+        // zoomIMG.setImageResource(imageResId);
+        final Rect startBounds = new Rect();
+        final Rect finalBounds = new Rect();
+        final Point globalOffset = new Point();
+        thumbView.getGlobalVisibleRect(startBounds);
+        zoomContainer
+                .getGlobalVisibleRect(finalBounds, globalOffset);
+        startBounds.offset(-globalOffset.x, -globalOffset.y);
+        finalBounds.offset(-globalOffset.x, -globalOffset.y);
+
+        float startScale;
+        if ((float) finalBounds.width() / finalBounds.height()
+                > (float) startBounds.width() / startBounds.height()) {
+            // Extend start bounds horizontally
+            startScale = (float) startBounds.height() / finalBounds.height();
+            float startWidth = startScale * finalBounds.width();
+            float deltaWidth = (startWidth - startBounds.width()) / 2;
+            startBounds.left -= deltaWidth;
+            startBounds.right += deltaWidth;
+        } else {
+            // Extend start bounds vertically
+            startScale = (float) startBounds.width() / finalBounds.width();
+            float startHeight = startScale * finalBounds.height();
+            float deltaHeight = (startHeight - startBounds.height()) / 2;
+            startBounds.top -= deltaHeight;
+            startBounds.bottom += deltaHeight;
+        }
+
+
+        thumbView.setAlpha(0f);
+        img_preview.setVisibility(View.VISIBLE);
+
+        img_preview.setPivotX(0f);
+        img_preview.setPivotY(0f);
+
+        AnimatorSet set = new AnimatorSet();
+        set
+                .play(ObjectAnimator.ofFloat(img_preview, View.X,
+                        startBounds.left, finalBounds.left))
+                .with(ObjectAnimator.ofFloat(img_preview, View.Y,
+                        startBounds.top, finalBounds.top))
+                .with(ObjectAnimator.ofFloat(img_preview, View.SCALE_X,
+                        startScale, 1f)).with(ObjectAnimator.ofFloat(img_preview,
+                View.SCALE_Y, startScale, 1f));
+        set.setDuration(mShortAnimationDuration);
+        set.setInterpolator(new DecelerateInterpolator());
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mCurrentAnimator = null;
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                mCurrentAnimator = null;
+            }
+        });
+        set.start();
+        mCurrentAnimator = set;
+
+        final float startScaleFinal = startScale;
+
+        img_preview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mCurrentAnimator != null) {
+                    mCurrentAnimator.cancel();
+                }
+
+                // Animate the four positioning/sizing properties in parallel,
+                // back to their original values.
+                AnimatorSet set = new AnimatorSet();
+                set.play(ObjectAnimator
+                        .ofFloat(img_preview, View.X, startBounds.left))
+                        .with(ObjectAnimator
+                                .ofFloat(img_preview,
+                                        View.Y,startBounds.top))
+                        .with(ObjectAnimator
+                                .ofFloat(img_preview,
+                                        View.SCALE_X, startScaleFinal))
+                        .with(ObjectAnimator
+                                .ofFloat(img_preview,
+                                        View.SCALE_Y, startScaleFinal));
+                set.setDuration(mShortAnimationDuration);
+                set.setInterpolator(new DecelerateInterpolator());
+                set.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        thumbView.setAlpha(1f);
+                        img_preview.setVisibility(View.GONE);
+                        mCurrentAnimator = null;
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                        thumbView.setAlpha(1f);
+                        img_preview.setVisibility(View.GONE);
+                        mCurrentAnimator = null;
+                    }
+                });
+                set.start();
+                mCurrentAnimator = set;
+            }
+        });
+
     }
 }

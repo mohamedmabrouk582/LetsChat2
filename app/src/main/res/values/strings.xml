@@ -24,4 +24,6 @@
     <string name="edit_img">Change Img</string>
     <string name="your_status">write your status</string>
     <string name="cancel">Cancel</string>
+    <string name="send">Send Friend Request</string>
+    <string name="reject">Reject Friend Request</string>
 </resources>

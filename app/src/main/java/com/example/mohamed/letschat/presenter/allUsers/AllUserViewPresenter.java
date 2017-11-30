@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mohamed.letschat.R;
+import com.example.mohamed.letschat.activity.UserInfoActivity;
 import com.example.mohamed.letschat.application.MyApp;
 import com.example.mohamed.letschat.data.User;
 import com.example.mohamed.letschat.presenter.base.BasePresenter;
@@ -44,6 +45,6 @@ public class AllUserViewPresenter<v extends AllUsersView> extends BasePresenter<
 
     @Override
     public void userClick(User user) {
-      Toast.makeText(activity, user.getName(), Toast.LENGTH_SHORT).show();
+        UserInfoActivity.start(activity,user);
     }
 }
