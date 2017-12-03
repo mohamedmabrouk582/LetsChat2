@@ -36,15 +36,17 @@ public class ChangeStatusViewPresenrter<v extends ChangeStatusView> extends Base
     private DataManger dataManger;
     public ChangeStatusViewPresenrter(Activity activity, View view, AlertDialog dialog,DataManger dataManger){
         this.activity=activity;
-        mDatabaseReference=MyApp.getDatabaseReference();
         mAuth=MyApp.getmAuth();
+        mDatabaseReference=MyApp.getDatabaseReference().child("Users").child(mAuth.getCurrentUser().getUid()).child("status");
+
+        mDatabaseReference.keepSynced(true);
         this.dataManger=dataManger;
         this.view=view;
         this.dialog=dialog;
     }
     @Override
     public void save(final String status) {
-     mDatabaseReference.child("Users").child(mAuth.getCurrentUser().getUid()).child("status").setValue(status).addOnSuccessListener(new OnSuccessListener<Void>() {
+     mDatabaseReference.setValue(status).addOnSuccessListener(new OnSuccessListener<Void>() {
          @Override
          public void onSuccess(Void aVoid) {
              showSnakBar("Update Status",view);

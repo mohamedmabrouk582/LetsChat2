@@ -7,6 +7,5 @@ package com.example.mohamed.letschat.view;
  */
 
 public interface UserInfoView extends MainView {
-    String sendFriendRequest();
-    String rejectFriendRequest();
+    String showIMG();
 }

@@ -22,6 +22,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    //noinspection GradleCompatible
     implementation 'com.google.firebase:firebase-database:11.0.4'
     implementation 'com.google.firebase:firebase-auth:11.0.4'
     implementation 'com.google.firebase:firebase-storage:11.0.4'
@@ -39,6 +40,10 @@ dependencies {
     implementation 'com.android.support:support-compat:26.1.0'
     implementation 'com.daimajia.easing:library:2.0@aar'
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
+    implementation 'id.zelory:compressor:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+
 //// FirebaseUI for Firebase Realtime Database
 //    implementation 'com.firebaseui:firebase-ui-database:3.1.0'
 //
@@ -53,9 +58,10 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.5.2'
     // FirebaseUI for Cloud Storage
   //  implementation 'com.firebaseui:firebase-ui-storage:3.1.0'
-    compile 'com.squareup.okhttp:okhttp:2.2.0'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
-    compile 'com.squareup.picasso:picasso:2.4.0'
+    implementation 'com.squareup.okhttp:okhttp:2.2.0'
+    implementation 'com.squareup.okhttp:okhttp-urlconnection:2.2.0'
+    implementation 'com.squareup.picasso:picasso:2.4.0'
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.5.+'
 
 }
 

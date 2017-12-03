@@ -44,7 +44,7 @@ public class AllUserViewPresenter<v extends AllUsersView> extends BasePresenter<
     }
 
     @Override
-    public void userClick(User user) {
-        UserInfoActivity.start(activity,user);
+    public void userClick(User user,String userKey,boolean me) {
+        UserInfoActivity.start(activity,user,userKey,me);
     }
 }

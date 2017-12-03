@@ -17,14 +17,18 @@ import com.example.mohamed.letschat.utils.SingleFragmentActivity;
 public class UserInfoActivity extends SingleFragmentActivity {
 
     private static final String USERS = "users";
+    private static final String USERKEY="USERKEY";
+    private static final String ME = "me";
 
-    public static void start(Context context, User user){
+    public static void start(Context context, User user,String userKey,boolean me){
         Intent intent=new Intent(context,UserInfoActivity.class);
         intent.putExtra(USERS,user);
+        intent.putExtra(USERKEY,userKey);
+        intent.putExtra(ME,me);
         context.startActivity(intent);
     }
     @Override
     public Fragment CreateFragment() {
-        return UserInfoFragment.nerwFragment((User) getIntent().getParcelableExtra(USERS));
+        return UserInfoFragment.nerwFragment((User) getIntent().getParcelableExtra(USERS),getIntent().getStringExtra(USERKEY),getIntent().getBooleanExtra(ME,false));
     }
 }

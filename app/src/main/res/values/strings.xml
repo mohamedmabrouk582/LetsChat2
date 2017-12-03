@@ -26,4 +26,6 @@
     <string name="cancel">Cancel</string>
     <string name="send">Send Friend Request</string>
     <string name="reject">Reject Friend Request</string>
+    <string name="accept">Confirm</string>
+    <string name="unFriend">UnFriend</string>
 </resources>

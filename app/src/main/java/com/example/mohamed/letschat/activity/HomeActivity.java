@@ -1,17 +1,24 @@
 package com.example.mohamed.letschat.activity;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
@@ -38,9 +45,12 @@ import com.example.mohamed.letschat.data.User;
 import com.example.mohamed.letschat.fragment.ChangeStatusFragment;
 import com.example.mohamed.letschat.presenter.home.HomePresenter;
 import com.example.mohamed.letschat.presenter.home.HomeViewPresenter;
+import com.example.mohamed.letschat.utils.ZoomIMG;
 import com.example.mohamed.letschat.view.HomeView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -48,6 +58,7 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,HomeView,View.OnClickListener {
     private static final String USER ="USER" ;
     private static final int IMG = 0;
+    private static final int PERMISSION = 100;
     private HomeViewPresenter presenter;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
@@ -60,6 +71,8 @@ public class HomeActivity extends AppCompatActivity
     private int mShortAnimationDuration;
     private LinearLayout zoomContainer;
     private DrawerLayout drawer;
+    private ZoomIMG zoomIMG;
+    private String[] permissions={Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
     public static void Start(Context context){
         Intent intent=new Intent(context,HomeActivity.class);
         context.startActivity(intent);
@@ -82,10 +95,14 @@ public class HomeActivity extends AppCompatActivity
         iniHeadView(navigationView.getHeaderView(0));
 
         /**********/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkPermissions();
+        }
         dataManger=((MyApp) getApplication()).getDataManger();
         mUser=dataManger.getUser();
         presenter=new HomeViewPresenter(this,navigationView.getHeaderView(0));
         presenter.attachView(this);
+        zoomIMG=new ZoomIMG();
         ini();
         setData(mUser);
 
@@ -141,10 +158,10 @@ public class HomeActivity extends AppCompatActivity
         switch (item.getItemId()){
             case R.id.all_friends:
                presenter.allFriends();
-
                 return true;
             case R.id.logout:
                 presenter.logout();
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -172,26 +189,55 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void editIMG() {
-        Intent intent=new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent,"Choose Your photo"),IMG);
+
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .start(this);
+
+//        Intent intent=new Intent(Intent.ACTION_GET_CONTENT);
+//        intent.setType("image/*");
+//        startActivityForResult(Intent.createChooser(intent,"Choose Your photo"),IMG);
+
+
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void  checkPermissions(){
+        try {
+            for (int i = 0; i <permissions.length ; i++) {
+                if (hasPermission(permissions[i])) {
+//                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,permissions[i])) {
+//
+//                    } else {
+//                        requestPermissions(new String[]{permissions[i]}, PERMISSION);
+//                    }
+                    requestPermissions(new String[]{permissions[i]}, PERMISSION);
+                }
+            }
+        }catch (Exception e){}
+    }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==IMG && resultCode==RESULT_OK){
-            presenter.edtIMG(data.getData(), mProfileImge, new HomePresenter.update() {
-                @Override
-                public void sucess(User user) {
-                    mUser=user;
-                }
-            });
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                Log.d("uri", resultUri + "");
+                presenter.edtIMG(resultUri, mProfileImge, new HomePresenter.update() {
+                    @Override
+                    public void sucess(User user) {
+                        mUser=user;
+                    }
+                });
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
         }
     }
 
+    @SuppressLint("NewApi")
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -207,122 +253,35 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void showIMG() {
         drawer.closeDrawers();
-        zoomImageFromThumb(mProfileImge,mUser.getImageUrl());
         mShortAnimationDuration = getResources().getInteger(
                 android.R.integer.config_shortAnimTime);
+        zoomIMG.zoomImageFromThumb(this,mProfileImge,mUser.getImageUrl(),mCurrentAnimator,img_preview,zoomContainer
+        ,mShortAnimationDuration
+        );
     }
 
-    private void zoomImageFromThumb(final View thumbView, String imageResId){
-        if (mCurrentAnimator != null) {
-            mCurrentAnimator.cancel();
-        }
-        Glide.with(this).load(Uri.parse(imageResId))
-                .error(R.drawable.logo)
-                .into(img_preview);
-        // zoomIMG.setImageResource(imageResId);
-        final Rect startBounds = new Rect();
-        final Rect finalBounds = new Rect();
-        final Point globalOffset = new Point();
-        thumbView.getGlobalVisibleRect(startBounds);
-        zoomContainer
-                .getGlobalVisibleRect(finalBounds, globalOffset);
-        startBounds.offset(-globalOffset.x, -globalOffset.y);
-        finalBounds.offset(-globalOffset.x, -globalOffset.y);
 
-        float startScale;
-        if ((float) finalBounds.width() / finalBounds.height()
-                > (float) startBounds.width() / startBounds.height()) {
-            // Extend start bounds horizontally
-            startScale = (float) startBounds.height() / finalBounds.height();
-            float startWidth = startScale * finalBounds.width();
-            float deltaWidth = (startWidth - startBounds.width()) / 2;
-            startBounds.left -= deltaWidth;
-            startBounds.right += deltaWidth;
-        } else {
-            // Extend start bounds vertically
-            startScale = (float) startBounds.width() / finalBounds.width();
-            float startHeight = startScale * finalBounds.height();
-            float deltaHeight = (startHeight - startBounds.height()) / 2;
-            startBounds.top -= deltaHeight;
-            startBounds.bottom += deltaHeight;
-        }
+    private boolean hasPermission(String permission){
+        return ContextCompat.checkSelfPermission(this,permission) != PackageManager.PERMISSION_GRANTED;
+    }
 
 
-        thumbView.setAlpha(0f);
-        img_preview.setVisibility(View.VISIBLE);
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d("perm", "done" + "");
 
-        img_preview.setPivotX(0f);
-        img_preview.setPivotY(0f);
+                } else {
 
-        AnimatorSet set = new AnimatorSet();
-        set
-                .play(ObjectAnimator.ofFloat(img_preview, View.X,
-                        startBounds.left, finalBounds.left))
-                .with(ObjectAnimator.ofFloat(img_preview, View.Y,
-                        startBounds.top, finalBounds.top))
-                .with(ObjectAnimator.ofFloat(img_preview, View.SCALE_X,
-                        startScale, 1f)).with(ObjectAnimator.ofFloat(img_preview,
-                View.SCALE_Y, startScale, 1f));
-        set.setDuration(mShortAnimationDuration);
-        set.setInterpolator(new DecelerateInterpolator());
-        set.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mCurrentAnimator = null;
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                mCurrentAnimator = null;
-            }
-        });
-        set.start();
-        mCurrentAnimator = set;
-
-        final float startScaleFinal = startScale;
-
-        img_preview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mCurrentAnimator != null) {
-                    mCurrentAnimator.cancel();
                 }
-
-                // Animate the four positioning/sizing properties in parallel,
-                // back to their original values.
-                AnimatorSet set = new AnimatorSet();
-                set.play(ObjectAnimator
-                        .ofFloat(img_preview, View.X, startBounds.left))
-                        .with(ObjectAnimator
-                                .ofFloat(img_preview,
-                                        View.Y,startBounds.top))
-                        .with(ObjectAnimator
-                                .ofFloat(img_preview,
-                                        View.SCALE_X, startScaleFinal))
-                        .with(ObjectAnimator
-                                .ofFloat(img_preview,
-                                        View.SCALE_Y, startScaleFinal));
-                set.setDuration(mShortAnimationDuration);
-                set.setInterpolator(new DecelerateInterpolator());
-                set.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        thumbView.setAlpha(1f);
-                        img_preview.setVisibility(View.GONE);
-                        mCurrentAnimator = null;
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-                        thumbView.setAlpha(1f);
-                        img_preview.setVisibility(View.GONE);
-                        mCurrentAnimator = null;
-                    }
-                });
-                set.start();
-                mCurrentAnimator = set;
+                return;
             }
-        });
-
+        }
     }
+
 }

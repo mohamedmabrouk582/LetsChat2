@@ -2,6 +2,7 @@ package com.example.mohamed.letschat.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -115,13 +116,19 @@ public class AllUsersFragment extends Fragment implements AllUsersView{
     }
 
     @Override
-    public void showUserClickedMessage(User user) {
-         presenter.userClick(user);
+    public void showUserClickedMessage(User user,String userKey,boolean me) {
+         presenter.userClick(user,userKey,me);
     }
 
     @Override
     public void showUsers() {
-         hideProgress();
+         showProgress();
+         new Handler().postDelayed(new Runnable() {
+             @Override
+             public void run() {
+                 hideProgress();
+             }
+         },1000l);
         final FirebaseRecyclerOptions<User> options =
                 new FirebaseRecyclerOptions.Builder<User>()
                         .setQuery(query, User.class)
@@ -152,18 +159,21 @@ public class AllUsersFragment extends Fragment implements AllUsersView{
             }
 
             @Override
-            protected void onBindViewHolder(UsersHolder holder, int position, final User model) {
+            protected void onBindViewHolder(UsersHolder holder, final int position, final User model) {
                 holder.bind(model);
                 holder.view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        showUserClickedMessage(model);
+                        showUserClickedMessage(model,String.valueOf(options.getSnapshots().getSnapshot(position).getKey()),
+                                options.getSnapshots().getSnapshot(position).getKey().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                ?true:false
+                                );
+                        //Log.d("key", options.getSnapshots().getSnapshot(position).getKey()+ "");
+
                     }
                 });
             }
         };
-
-
 
         mRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();

@@ -38,7 +38,8 @@ public class RegisterViewPresenter<v extends RegisterView> extends BasePresenter
         this.activity=activity;
         this.view=view;
         mAuth= MyApp.getmAuth();
-        mDatabaseReference=MyApp.getDatabaseReference();
+        mDatabaseReference=MyApp.getDatabaseReference().child("Users");
+        mDatabaseReference.keepSynced(true);
         dataManger=((MyApp) activity.getApplication()).getDataManger();
     }
     @Override
@@ -69,13 +70,13 @@ public class RegisterViewPresenter<v extends RegisterView> extends BasePresenter
     }
 
 
-    private void addTODataBase(String root,final String name , final String email ){
+    private void addTODataBase(String root,final String name , final String email){
         Map<String,String> map=new HashMap<>();
         map.put("name",name);
         map.put("email",email);
         map.put("imageUrl","default");
         map.put("status","I am Use Let's Chat");
-        DatabaseReference reference=mDatabaseReference.child("Users").child(root);
+        DatabaseReference reference=mDatabaseReference.child(root);
         reference.setValue(map).
                 addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

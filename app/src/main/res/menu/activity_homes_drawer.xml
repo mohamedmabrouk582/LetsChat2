@@ -6,7 +6,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/edit_status"
-            android:icon="@drawable/ic_edt"
+            android:icon="@android:drawable/ic_menu_edit"
             android:title="@string/edit_status" />
     </group>
 </menu>

@@ -13,6 +13,10 @@ import com.google.firebase.auth.UserInfo;
 
 public interface UserInfoPresenter<v extends UserInfoView> extends MainPresenter<v> {
     //todo User Info
-    void sendFriendRequest(String userid);
-    void rejectFriendRequest(String userid);
+    interface requestListner{
+        void onSucess(String type);
+    }
+    void sendFriendRequest(String userid,String requestTYPE,requestListner listner);
+    void stateRequest(String userid,requestListner listner);
+    void reject(String userid,requestListner listner);
 }

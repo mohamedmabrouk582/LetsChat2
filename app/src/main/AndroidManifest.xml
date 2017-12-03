@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mohamed.letschat">
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name=".application.MyApp"
@@ -23,6 +26,8 @@
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_homes"
             android:theme="@style/AppTheme"></activity>
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
 <activity android:name=".activity.AllUsersActivity"
     android:theme="@style/AppThemeWithBar"
     android:label="All Users"

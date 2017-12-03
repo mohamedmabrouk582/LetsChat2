@@ -5,10 +5,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="center">
-
     <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/zoomContainer_preview"
+        >
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    <FrameLayout
+        android:layout_marginTop="@dimen/_30sdp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        >
 
         <ProgressBar
             android:layout_gravity="center"
@@ -32,9 +44,22 @@
 
 
     </FrameLayout>
+
+
+
+
+    <TextView
+        android:id="@+id/other_user_name"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_gravity="center"
+        android:textSize="@dimen/_15sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="i am use let's chat"
+        />
     <TextView
         android:id="@+id/other_user_status"
-        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         android:layout_gravity="center"
         android:textSize="@dimen/_15sdp"
         android:layout_width="wrap_content"
@@ -71,5 +96,13 @@
         android:textColor="@color/white" />
 
 
-
+</LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/_10sdp"
+            android:id="@+id/user_img_preview"
+            android:scaleType="centerCrop"
+            />
+    </FrameLayout>
 </LinearLayout>

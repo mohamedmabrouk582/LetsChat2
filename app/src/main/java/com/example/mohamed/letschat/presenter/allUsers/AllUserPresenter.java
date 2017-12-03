@@ -12,6 +12,6 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
  */
 
 public interface AllUserPresenter<v extends AllUsersView>  extends MainPresenter<v>{
-    void  userClick(User user);
+    void  userClick(User user,String userkey,boolean me);
 
 }
