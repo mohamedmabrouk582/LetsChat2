@@ -2,6 +2,7 @@ package com.example.mohamed.letschat.presenter.friends;
 
 import android.app.Activity;
 
+import com.example.mohamed.letschat.activity.ChatActivity;
 import com.example.mohamed.letschat.activity.UserInfoActivity;
 import com.example.mohamed.letschat.application.MyApp;
 import com.example.mohamed.letschat.data.User;
@@ -30,7 +31,8 @@ public class FriendsViewPresenter<v extends FriendsView> extends BasePresenter<v
 
     @Override
     public void userClick(User user, String userkey, boolean me) {
-        UserInfoActivity.start(activity,user,userkey,me);
+      //  UserInfoActivity.start(activity,user,userkey,me);
+        activity.startActivity(ChatActivity.newIntent(activity,user,userkey));
     }
 
     @Override

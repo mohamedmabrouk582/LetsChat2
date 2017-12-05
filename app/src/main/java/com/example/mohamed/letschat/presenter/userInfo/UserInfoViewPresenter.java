@@ -19,6 +19,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by mohamed mabrouk
@@ -31,11 +33,13 @@ public class UserInfoViewPresenter<v extends UserInfoView> extends BasePresenter
     private Activity activity;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference databaseReference;
+    private DatabaseReference mNotifications;
     private FirebaseAuth mAuth;
     public UserInfoViewPresenter(Activity activity){
         this.activity=activity;
         mDatabaseReference= MyApp.getDatabaseReference().child("Friends_req");
         databaseReference=MyApp.getDatabaseReference().child("Friends");
+        mNotifications=MyApp.getDatabaseReference().child("notifications");
         mAuth=MyApp.getmAuth();
     }
 
@@ -53,7 +57,16 @@ public class UserInfoViewPresenter<v extends UserInfoView> extends BasePresenter
                                           .setValue("received").addOnSuccessListener(new OnSuccessListener<Void>() {
                                       @Override
                                       public void onSuccess(Void aVoid) {
-                                          listner.onSucess("Remove Request");
+
+                                          Map<String,String> notificationData=new HashMap<>();
+                                          notificationData.put("from",mAuth.getCurrentUser().getUid());
+                                          notificationData.put("type","request");
+                                          mNotifications.child(userid).push().setValue(notificationData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                              @Override
+                                              public void onSuccess(Void aVoid) {
+                                                  listner.onSucess("Remove Request");
+                                              }
+                                          });
                                       }
                                   });
                               }else {

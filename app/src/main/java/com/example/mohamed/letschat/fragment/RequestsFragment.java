@@ -1,6 +1,7 @@
 package com.example.mohamed.letschat.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.mohamed.letschat.R;
+import com.example.mohamed.letschat.application.DataManger;
 import com.example.mohamed.letschat.application.MyApp;
 import com.example.mohamed.letschat.data.Request;
 import com.example.mohamed.letschat.data.User;
@@ -58,19 +61,23 @@ public class RequestsFragment extends Fragment implements RequestView {
         view=inflater.inflate(R.layout.requests_frgament,container,false);
          presenter=new RequestViewPresenter(getActivity());
          presenter.attachView(this);
-         mAuth=MyApp.getmAuth();
+        mAuth=MyApp.getmAuth();
         mDatabaseReference= MyApp.getDatabaseReference().child("Friends_req").child(mAuth.getCurrentUser().getUid());
         mReference=MyApp.getDatabaseReference().child("Users");
         query=mDatabaseReference.limitToFirst(10);
         iniRecyl();
         iniSwipe();
         showUsers();
+
         return view;
     }
+
+
     @Override
     public void onStart() {
         super.onStart();
         adapter.startListening();
+
     }
 
     @Override
@@ -122,6 +129,7 @@ public class RequestsFragment extends Fragment implements RequestView {
 
     @Override
     public void showUsers() {
+
         showProgress();
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -178,7 +186,7 @@ public class RequestsFragment extends Fragment implements RequestView {
                           @Override
                           public void onClick(View view) {
                               try {
-                                      presenter.acceptCancelRequest(options.getSnapshots().getSnapshot(position).getKey(), model.getRequest_type(), new RequestPresenter.requestListner() {
+                                      presenter.acceptCancelRequest(options.getSnapshots().getSnapshot(position).getKey(), "sent", new RequestPresenter.requestListner() {
                                           @Override
                                           public void onSucess() {
                                               adapter.notifyDataSetChanged();
@@ -187,7 +195,7 @@ public class RequestsFragment extends Fragment implements RequestView {
                                       });
                               }catch (Exception e){
                                   cancelFlag=true;
-                                  presenter.acceptCancelRequest(options.getSnapshots().getSnapshot(position - 1).getKey(), model.getRequest_type(), new RequestPresenter.requestListner() {
+                                  presenter.acceptCancelRequest(options.getSnapshots().getSnapshot(position - 1).getKey(), "sent", new RequestPresenter.requestListner() {
                                       @Override
                                       public void onSucess() {
                                           adapter.notifyDataSetChanged();

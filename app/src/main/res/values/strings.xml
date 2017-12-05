@@ -28,4 +28,7 @@
     <string name="reject">Reject Friend Request</string>
     <string name="accept">Confirm</string>
     <string name="unFriend">UnFriend</string>
+    <string name="massage">Write ......</string>
+    <string name="ok">Ok</string>
+    <string name="logFromOtherPhone">You login from another  device</string>
 </resources>

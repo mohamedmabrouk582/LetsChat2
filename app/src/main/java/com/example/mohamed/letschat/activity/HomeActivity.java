@@ -47,8 +47,7 @@ import com.example.mohamed.letschat.presenter.home.HomePresenter;
 import com.example.mohamed.letschat.presenter.home.HomeViewPresenter;
 import com.example.mohamed.letschat.utils.ZoomIMG;
 import com.example.mohamed.letschat.view.HomeView;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -104,6 +103,9 @@ public class HomeActivity extends AppCompatActivity
         presenter.attachView(this);
         zoomIMG=new ZoomIMG();
         ini();
+        dataManger.setFragmnt("Requests");
+        Log.d("tap", dataManger.getFragment() + "");
+
         setData(mUser);
 
     }
@@ -135,6 +137,23 @@ public class HomeActivity extends AppCompatActivity
         mTabLayout.setupWithViewPager(mViewPager);
         zoomContainer=findViewById(R.id.zoomContainer);
         mViewPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                dataManger.setFragmnt(String.valueOf(tab.getText()));
+                Log.d("tap", dataManger.getFragment() + "");
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
         mProfileImge.setOnClickListener(this);
     }
     @Override

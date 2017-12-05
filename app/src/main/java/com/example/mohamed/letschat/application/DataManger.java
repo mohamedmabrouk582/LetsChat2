@@ -30,7 +30,26 @@ public class DataManger {
     public void setEmail(String email){
         mSharedPreferences.putEmail(email);
     }
+     public void setFragmnt(String s){
+        mSharedPreferences.putrunningFragment(s);
+     }
+    public void deleteFragment(){
+         mSharedPreferences.removeFragment();
+    }
 
+    public void setToken(String token){
+        mSharedPreferences.putToken(token);
+    }
+
+    public void setUserId(String id){
+        mSharedPreferences.putUserId(id);
+    }
+    public String getUserId(){
+      return   mSharedPreferences.getUserid();
+    }
+     public String getFragment(){
+         return mSharedPreferences.getFragmentName();
+     }
     public void setIMG(String img){
         mSharedPreferences.putIMG(img);
     }
@@ -38,7 +57,7 @@ public class DataManger {
     public void setStatus(String status){
         mSharedPreferences.putStatus(status);
     }
-    public void setUser(String name , String email ,String img,String status){
-        mSharedPreferences.putUser(name,email,img,status);
+    public void setUser(String name , String email ,String img,String status,String tokn){
+        mSharedPreferences.putUser(name,email,img,status,tokn);
     }
 }

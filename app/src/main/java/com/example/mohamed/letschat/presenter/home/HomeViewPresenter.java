@@ -26,7 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
@@ -55,8 +54,7 @@ public class HomeViewPresenter<v extends HomeView> extends BasePresenter<v> impl
         dataManger=((MyApp) context.getApplication()).getDataManger();
         mStorageReference=MyApp.getStorageReference();
         mAuth=MyApp.getmAuth();
-        mDatabaseReference=MyApp.getDatabaseReference().child("Users").child(mAuth.getCurrentUser()
-                .getUid());
+        mDatabaseReference=MyApp.getDatabaseReference().child("Users").child(mAuth.getCurrentUser().getUid());
         mDatabaseReference.keepSynced(true);
         loadProgressBar=view.findViewById(R.id.img_load);
         txtLoad=view.findViewById(R.id.txt_progress);
@@ -129,7 +127,13 @@ public class HomeViewPresenter<v extends HomeView> extends BasePresenter<v> impl
     @Override
     public void logout() {
         dataManger.clear();
-        MyApp.getmAuth().signOut();
-        SplashActivity.Start(context);
+        mDatabaseReference.child("device_token").setValue("null").addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                MyApp.getmAuth().signOut();
+                SplashActivity.Start(context);
+            }
+        });
+
     }
 }

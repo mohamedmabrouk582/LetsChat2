@@ -13,6 +13,21 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".utils.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".utils.FirebaseIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
+
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,6 +50,12 @@
     />
         <activity android:name=".activity.UserInfoActivity"
     />
+        <activity android:name=".activity.ChatActivity"/>
+
+
+        <activity
+            android:name=".activity.MyDialog"
+            android:theme="@style/Theme.UserDialog"/>
     </application>
 
 </manifest>

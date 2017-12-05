@@ -3,6 +3,7 @@ package com.example.mohamed.letschat.presenter.register;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.example.mohamed.letschat.activity.HomeActivity;
@@ -17,6 +18,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,17 +74,22 @@ public class RegisterViewPresenter<v extends RegisterView> extends BasePresenter
 
     private void addTODataBase(String root,final String name , final String email){
         Map<String,String> map=new HashMap<>();
+        final String device_token= FirebaseInstanceId.getInstance().getToken();
         map.put("name",name);
         map.put("email",email);
         map.put("imageUrl","default");
         map.put("status","I am Use Let's Chat");
+        map.put("device_token",device_token);
         DatabaseReference reference=mDatabaseReference.child(root);
         reference.setValue(map).
                 addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         dataManger.clear();
-                        dataManger.setUser(name,email,"default","I am Use Let's Chat");
+                        dataManger.setUserId(mAuth.getCurrentUser().getUid());
+
+                        dataManger.setUser(name,email,"default","I am Use Let's Chat",device_token);
+                        Log.d("tokenme", dataManger.getUser().getDevice_token() + "");
                         HomeActivity.Start(activity);
                         activity.finish();
                     }

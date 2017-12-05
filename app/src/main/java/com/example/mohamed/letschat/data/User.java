@@ -14,6 +14,7 @@ public class User implements Parcelable {
     private String email;
     private String imageUrl;
     private String status;
+    private String device_token;
 
 
 
@@ -24,6 +25,15 @@ public class User implements Parcelable {
                 ", email='" + email + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
                 '}';
+    }
+
+
+    public String getDevice_token() {
+        return device_token;
+    }
+
+    public void setDevice_token(String device_token) {
+        this.device_token = device_token;
     }
 
     public String getName() {
@@ -61,11 +71,12 @@ public class User implements Parcelable {
     public User() {
     }
 
-    public User(String name, String email, String imageUrl, String status) {
+    public User(String name, String email, String imageUrl, String status, String device_token) {
         this.name = name;
         this.email = email;
         this.imageUrl = imageUrl;
         this.status = status;
+        this.device_token = device_token;
     }
 
     @Override
@@ -79,6 +90,7 @@ public class User implements Parcelable {
         dest.writeString(this.email);
         dest.writeString(this.imageUrl);
         dest.writeString(this.status);
+        dest.writeString(this.device_token);
     }
 
     protected User(Parcel in) {
@@ -86,6 +98,7 @@ public class User implements Parcelable {
         this.email = in.readString();
         this.imageUrl = in.readString();
         this.status = in.readString();
+        this.device_token = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {

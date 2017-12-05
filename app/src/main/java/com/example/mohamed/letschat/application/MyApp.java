@@ -1,6 +1,7 @@
 package com.example.mohamed.letschat.application;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.example.mohamed.letschat.data.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -9,6 +10,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -33,7 +35,8 @@ public class MyApp extends Application {
         mStorageReference= FirebaseStorage.getInstance().getReference();
         Myshard myshard=new Myshard(this);
         manger=new DataManger(myshard);
-        updateServerLisner();
+        Log.d("token", FirebaseInstanceId.getInstance().getToken()+ "");
+       // updateServerLisner();
     }
 
     private void updateServerLisner(){
@@ -43,7 +46,7 @@ public class MyApp extends Application {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user=dataSnapshot.getValue(User.class);
                 manger.clear();
-                manger.setUser(user.getName(),user.getEmail(),user.getImageUrl(),user.getStatus());
+                manger.setUser(user.getName(),user.getEmail(),user.getImageUrl(),user.getStatus(),FirebaseInstanceId.getInstance().getToken());
             }
 
             @Override

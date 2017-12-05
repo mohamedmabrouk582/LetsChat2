@@ -9,4 +9,7 @@
     <color name="chat">#FF9800</color>
     <color name="appFont">#9f9f9f</color>
     <color name="white">#ffffff</color>
+    <color name="gray">#ccc</color>
+    <color name="black">#000</color>
+    <color name="trans_xx">#00fffefe</color>
 </resources>

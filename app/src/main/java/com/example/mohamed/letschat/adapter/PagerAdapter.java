@@ -1,9 +1,13 @@
 package com.example.mohamed.letschat.adapter;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
+import com.example.mohamed.letschat.application.DataManger;
+import com.example.mohamed.letschat.application.MyApp;
 import com.example.mohamed.letschat.fragment.ChatFragment;
 import com.example.mohamed.letschat.fragment.FriendsFragment;
 import com.example.mohamed.letschat.fragment.RequestsFragment;
@@ -16,7 +20,6 @@ import com.example.mohamed.letschat.fragment.SplashFragment;
  */
 
 public class PagerAdapter extends FragmentPagerAdapter {
-
     public PagerAdapter(FragmentManager fm) {
         super(fm);
     }
@@ -25,11 +28,17 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                return new FriendsFragment();
-            case 1:
-                return new ChatFragment();
-            case 2:
+                Log.d("action", "0" + "");
                 return new RequestsFragment();
+            case 1:
+                Log.d("action", "1" + "");
+
+                return new FriendsFragment();
+            case 2:
+                Log.d("action", "2" + "");
+
+                return new ChatFragment();
+
 
         }
         return null;
@@ -44,11 +53,12 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position){
             case 0:
-                return "Friends";
+                return "Requests";
             case 1:
-                return "Chat";
+                return "Friends";
             case 2:
-                return "Request";
+                return "Chat";
+
 
         }
 

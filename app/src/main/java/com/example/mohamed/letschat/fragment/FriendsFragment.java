@@ -1,6 +1,7 @@
 package com.example.mohamed.letschat.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.mohamed.letschat.R;
+import com.example.mohamed.letschat.application.DataManger;
 import com.example.mohamed.letschat.application.MyApp;
 import com.example.mohamed.letschat.data.Friend;
 import com.example.mohamed.letschat.data.Request;
@@ -55,6 +58,7 @@ public class FriendsFragment extends Fragment implements FriendsView {
     private FirebaseAuth mAuth;
     private FirebaseRecyclerAdapter adapter;
     private Query query;
+    private DataManger dataManger;
     private String mCurrentState="sent";
     private DatabaseReference mReference;
     @Nullable
@@ -63,6 +67,7 @@ public class FriendsFragment extends Fragment implements FriendsView {
         view=inflater.inflate(R.layout.friends_fragment,container,false);
         presenter=new FriendsViewPresenter(getActivity());
         presenter.attachView(this);
+        dataManger=((MyApp) getActivity().getApplication()).getDataManger();
         mAuth= MyApp.getmAuth();
         mDatabaseReference= MyApp.getDatabaseReference().child("Friends").child(mAuth.getCurrentUser().getUid());
         mReference=MyApp.getDatabaseReference().child("Users");
@@ -70,6 +75,8 @@ public class FriendsFragment extends Fragment implements FriendsView {
         iniRecyl();
         iniSwipe();
         showUsers();
+        Log.d("me", "friends" + "");
+
         return view;
     }
 
@@ -77,7 +84,10 @@ public class FriendsFragment extends Fragment implements FriendsView {
     public void onStart() {
         super.onStart();
         adapter.startListening();
+
     }
+
+
 
     @Override
     public void onStop() {

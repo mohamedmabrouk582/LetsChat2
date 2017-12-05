@@ -27,6 +27,14 @@ public class UserInfoActivity extends SingleFragmentActivity {
         intent.putExtra(ME,me);
         context.startActivity(intent);
     }
+
+    public static Intent  newIntent(Context context, User user,String userKey,boolean me){
+        Intent intent=new Intent(context,UserInfoActivity.class);
+        intent.putExtra(USERS,user);
+        intent.putExtra(USERKEY,userKey);
+        intent.putExtra(ME,me);
+        return intent;
+    }
     @Override
     public Fragment CreateFragment() {
         return UserInfoFragment.nerwFragment((User) getIntent().getParcelableExtra(USERS),getIntent().getStringExtra(USERKEY),getIntent().getBooleanExtra(ME,false));
