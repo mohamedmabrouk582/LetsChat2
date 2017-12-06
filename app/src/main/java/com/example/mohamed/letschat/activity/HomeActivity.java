@@ -14,6 +14,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -48,6 +49,9 @@ import com.example.mohamed.letschat.presenter.home.HomeViewPresenter;
 import com.example.mohamed.letschat.utils.ZoomIMG;
 import com.example.mohamed.letschat.view.HomeView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ServerValue;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -71,9 +75,13 @@ public class HomeActivity extends AppCompatActivity
     private LinearLayout zoomContainer;
     private DrawerLayout drawer;
     private ZoomIMG zoomIMG;
+    private boolean fromLogin;
     private String[] permissions={Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    public static void Start(Context context){
+    private DatabaseReference mDatabaseReference;
+
+    public static void Start(Context context,boolean fromLogin){
         Intent intent=new Intent(context,HomeActivity.class);
+        intent.putExtra("fromlogin",fromLogin);
         context.startActivity(intent);
     }
 
@@ -97,6 +105,7 @@ public class HomeActivity extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermissions();
         }
+        mDatabaseReference=MyApp.getDatabaseReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         dataManger=((MyApp) getApplication()).getDataManger();
         mUser=dataManger.getUser();
         presenter=new HomeViewPresenter(this,navigationView.getHeaderView(0));
@@ -105,7 +114,6 @@ public class HomeActivity extends AppCompatActivity
         ini();
         dataManger.setFragmnt("Requests");
         Log.d("tap", dataManger.getFragment() + "");
-
         setData(mUser);
 
     }
@@ -128,6 +136,35 @@ public class HomeActivity extends AppCompatActivity
             Glide.with(this).load(data.getImageUrl()).error(R.drawable.logo)
                     .into(mProfileImge);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!getIntent().getBooleanExtra("fromlogin",false)) {
+            mDatabaseReference.child("online").setValue(true);
+        }
+    }
+
+
+
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+      //  mDatabaseReference.child("online").setValue(false);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (FirebaseAuth.getInstance().getCurrentUser()!=null){
+            MyApp.getDatabaseReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("lastSeen").setValue(ServerValue.TIMESTAMP);
+
+        }
+
     }
 
     private void ini(){

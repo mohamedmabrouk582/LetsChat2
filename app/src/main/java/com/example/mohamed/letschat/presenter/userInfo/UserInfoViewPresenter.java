@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
@@ -33,13 +34,13 @@ public class UserInfoViewPresenter<v extends UserInfoView> extends BasePresenter
     private Activity activity;
     private DatabaseReference mDatabaseReference;
     private DatabaseReference databaseReference;
-    private DatabaseReference mNotifications;
+    private DatabaseReference mReference;
     private FirebaseAuth mAuth;
     public UserInfoViewPresenter(Activity activity){
         this.activity=activity;
         mDatabaseReference= MyApp.getDatabaseReference().child("Friends_req");
         databaseReference=MyApp.getDatabaseReference().child("Friends");
-        mNotifications=MyApp.getDatabaseReference().child("notifications");
+        mReference=MyApp.getDatabaseReference();
         mAuth=MyApp.getmAuth();
     }
 
@@ -48,97 +49,73 @@ public class UserInfoViewPresenter<v extends UserInfoView> extends BasePresenter
     public void sendFriendRequest(final String userid, String requestType, final requestListner listner) {
       switch (requestType){
           case "not_friends":
-                mDatabaseReference.child(mAuth.getCurrentUser().getUid()).child(userid).child("request_type").setValue("sent")
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                              if (task.isSuccessful()){
-                                  mDatabaseReference.child(userid).child(mAuth.getCurrentUser().getUid()).child("request_type")
-                                          .setValue("received").addOnSuccessListener(new OnSuccessListener<Void>() {
-                                      @Override
-                                      public void onSuccess(Void aVoid) {
+              String notificationId=FirebaseDatabase.getInstance().getReference().child("notifications").push().getKey();
+              Map<String,String> notificationData=new HashMap<>();
+              notificationData.put("from",mAuth.getCurrentUser().getUid());
+              notificationData.put("type","request");
+              Map requestMap=new HashMap<>();
+              requestMap.put("Friends_req/"+mAuth.getCurrentUser().getUid()+"/"+userid+"/request_type","sent");
+              requestMap.put("Friends_req/"+userid+"/"+mAuth.getCurrentUser().getUid()+"/request_type","received");
+              requestMap.put("notifications/"+userid+"/"+notificationId,notificationData);
+              mReference.updateChildren(requestMap, new DatabaseReference.CompletionListener() {
+                  @Override
+                  public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    if (databaseError==null){
+                        listner.onSucess("Remove Request");
+                    }
+                  }
+              });
 
-                                          Map<String,String> notificationData=new HashMap<>();
-                                          notificationData.put("from",mAuth.getCurrentUser().getUid());
-                                          notificationData.put("type","request");
-                                          mNotifications.child(userid).push().setValue(notificationData).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                              @Override
-                                              public void onSuccess(Void aVoid) {
-                                                  listner.onSucess("Remove Request");
-                                              }
-                                          });
-                                      }
-                                  });
-                              }else {
-
-                              }
-                            }
-                        });
               break;
           case "sent":
-              mDatabaseReference.child(mAuth.getCurrentUser().getUid()).child(userid).child("request_type").removeValue()
-                      .addOnSuccessListener(new OnSuccessListener<Void>() {
-                          @Override
-                          public void onSuccess(Void aVoid) {
-                              mDatabaseReference.child(userid).child(mAuth.getCurrentUser().getUid()).child("request_type").removeValue()
-                                      .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                          @Override
-                                          public void onSuccess(Void aVoid) {
-                                              listner.onSucess("Send Friend Request");
-                                          }
-                                      });
-                          }
-                      });
+              Map sentMap=new HashMap<>();
+              sentMap.put("Friends_req/"+mAuth.getCurrentUser().getUid()+"/"+userid+"/request_type",null);
+              sentMap.put("Friends_req/"+userid+"/"+mAuth.getCurrentUser().getUid()+"/request_type",null);
+
+              mReference.updateChildren(sentMap, new DatabaseReference.CompletionListener() {
+                  @Override
+                  public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                      if (databaseError==null){
+                          listner.onSucess("Send Friend Request");
+                      }
+                  }
+              });
               break;
           case "received":
-              mDatabaseReference.child(mAuth.getCurrentUser().getUid()).child(userid).child("request_type").removeValue()
-                      .addOnSuccessListener(new OnSuccessListener<Void>() {
-                          @Override
-                          public void onSuccess(Void aVoid) {
-                              mDatabaseReference.child(userid).child(mAuth.getCurrentUser().getUid()).child("request_type").removeValue()
-                                      .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                          @Override
-                                          public void onSuccess(Void aVoid) {
-                                            beFriends(userid,listner);
-                                          }
-                                      });
-                          }
-                      });
+              String date= DateFormat.getDateTimeInstance().format(new Date());
+              Map receivedMap=new HashMap<>();
+              receivedMap.put("Friends_req/"+mAuth.getCurrentUser().getUid()+"/"+userid+"/request_type",null);
+              receivedMap.put("Friends_req/"+userid+"/"+mAuth.getCurrentUser().getUid()+"/request_type",null);
+
+              receivedMap.put("Friends/"+mAuth.getCurrentUser().getUid()+"/"+userid,date);
+              receivedMap.put("Friends/"+userid+"/"+mAuth.getCurrentUser().getUid(),date);
+
+              mReference.updateChildren(receivedMap, new DatabaseReference.CompletionListener() {
+                  @Override
+                  public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                      if (databaseError==null){
+                          listner.onSucess("Send Friend Request");
+                      }
+                  }
+              });
               break;
           case "friends":
-              databaseReference.child(mAuth.getCurrentUser().getUid()).child(userid).removeValue()
-                      .addOnSuccessListener(new OnSuccessListener<Void>() {
-                          @Override
-                          public void onSuccess(Void aVoid) {
-                              databaseReference.child(userid).child(mAuth.getCurrentUser().getUid()).removeValue()
-                                      .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                          @Override
-                                          public void onSuccess(Void aVoid) {
-                                              listner.onSucess("Send Friend Request");
-                                          }
-                                      });
-                          }
-                      });
+              Map friendsMap=new HashMap();
+              friendsMap.put("Friends/"+mAuth.getCurrentUser().getUid()+"/"+userid,null);
+              friendsMap.put("Friends/"+userid+"/"+mAuth.getCurrentUser().getUid(),null);
+
+              mReference.updateChildren(friendsMap, new DatabaseReference.CompletionListener() {
+                  @Override
+                  public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                      listner.onSucess("Send Friend Request");
+                  }
+              });
               break;
 
       }
     }
 
-    private void beFriends(final String  userid, final requestListner listner){
-        final String date= DateFormat.getDateTimeInstance().format(new Date());
-        databaseReference.child(mAuth.getCurrentUser().getUid()).child(userid).setValue(date)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        databaseReference.child(userid).child(mAuth.getCurrentUser().getUid()).setValue(date).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                              listner.onSucess("friends");
-                            }
-                        });
-                    }
-                });
-    }
+
 
     @Override
     public void stateRequest(final String userid, final requestListner listner) {
@@ -176,19 +153,19 @@ public class UserInfoViewPresenter<v extends UserInfoView> extends BasePresenter
 
     @Override
     public void reject(final String userid, final requestListner listner) {
-        mDatabaseReference.child(mAuth.getCurrentUser().getUid()).child(userid).child("request_type").removeValue()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        mDatabaseReference.child(userid).child(mAuth.getCurrentUser().getUid()).child("request_type").removeValue()
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        listner.onSucess("Send Friend Request");
-                                    }
-                                });
-                    }
-                });
+        Map rejectMap=new HashMap();
+        rejectMap.put("Friends_req/"+mAuth.getCurrentUser().getUid()+"/"+userid+"/request_type",null);
+        rejectMap.put("Friends_req/"+userid+"/"+mAuth.getCurrentUser().getUid()+"/request_type",null);
+
+        mReference.updateChildren(rejectMap, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError==null){
+                    listner.onSucess("Send Friend Request");
+
+                }
+            }
+        });
     }
 
 

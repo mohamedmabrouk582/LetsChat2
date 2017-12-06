@@ -32,15 +32,23 @@ import com.example.mohamed.letschat.view.ChatView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static java.text.DateFormat.getDateTimeInstance;
 
 /**
  * Created by mohamed mabrouk
@@ -59,8 +67,10 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
     private FirebaseRecyclerAdapter adapter;
     private ChatViewPresenter presenter;
     private DatabaseReference mDatabaseReference;
+    private DatabaseReference mReference;
     private String userKey;
     private User mUser;
+    private  ToolBar.ToolBarBuilder builder;
 
 
     public static Intent newIntent(Context context,User user,String userKey){
@@ -80,14 +90,40 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
         iniSwipe();
     }
 
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        MyApp.getDatabaseReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("online").setValue(true);
+//
+//    }
+//
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyApp.getDatabaseReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("lastSeen").setValue(ServerValue.TIMESTAMP);
+    }
+
+    public static String getTimeDate(long timeStamp){
+        try{
+            DateFormat dateFormat = getDateTimeInstance();
+            Date netDate = (new Date(timeStamp));
+            return dateFormat.format(netDate);
+        } catch(Exception e) {
+            return "not";
+        }
+    }
+
     private void init(){
         userKey=getIntent().getStringExtra(USERKEY);
         mUser=getIntent().getParcelableExtra(USER);
         send=findViewById(R.id.send);
         massageEditText=findViewById(R.id.massage);
-        setToolbar();
+
         mDatabaseReference= MyApp.getDatabaseReference().child("Chats");
+        mReference=MyApp.getDatabaseReference().child("Users");
         query=mDatabaseReference.limitToFirst(50);
+        setToolbar();
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,8 +134,9 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
     }
 
     private void setToolbar(){
-         new ToolBar.ToolBarBuilder(mUser.getName(), this)
+                builder= new ToolBar.ToolBarBuilder(mUser.getName(), this)
                 .setImg(mUser.getImageUrl())
+
                 .setIMGAction(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -110,7 +147,28 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
                     public void onClick(View view) {
 
                     }
-                }).build();
+                });
+                builder.build();
+
+
+              mReference.child(userKey).addValueEventListener(new ValueEventListener() {
+                  @Override
+                  public void onDataChange(DataSnapshot dataSnapshot) {
+                     try {
+                         User user=dataSnapshot.getValue(User.class);
+
+                         builder.setLastSeen(user.isOnline()?"online":getTimeDate(mUser.getLastSeen())).build();
+
+                     }catch (Exception e){}
+                  }
+
+                  @Override
+                  public void onCancelled(DatabaseError databaseError) {
+
+                  }
+              });
+
+
 
     }
 

@@ -126,10 +126,12 @@ public class HomeViewPresenter<v extends HomeView> extends BasePresenter<v> impl
 
     @Override
     public void logout() {
+
         dataManger.clear();
         mDatabaseReference.child("device_token").setValue("null").addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+               mDatabaseReference.child("online").setValue(false);
                 MyApp.getmAuth().signOut();
                 SplashActivity.Start(context);
             }

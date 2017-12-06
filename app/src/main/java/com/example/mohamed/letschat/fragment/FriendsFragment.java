@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -92,7 +93,7 @@ public class FriendsFragment extends Fragment implements FriendsView {
     @Override
     public void onStop() {
         super.onStop();
-        adapter.startListening();
+        adapter.stopListening();
     }
 
     private void iniRecyl(){
@@ -164,7 +165,12 @@ public class FriendsFragment extends Fragment implements FriendsView {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                       final User user=dataSnapshot.getValue(User.class);
-                      holder.bind(user,model);
+                        try {
+                              holder.bind(user,model);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        Log.d("datejj", model + "");
 
 
 
@@ -223,6 +229,7 @@ public class FriendsFragment extends Fragment implements FriendsView {
         private TextView userName,userStatus;
         public View view;
         public Button unFriend;
+        private ImageView online;
         @SuppressLint("WrongViewCast")
         public FriendsHolder(View itemView) {
             super(itemView);
@@ -231,22 +238,20 @@ public class FriendsFragment extends Fragment implements FriendsView {
             userName=itemView.findViewById(R.id.user_name_friend);
             userStatus=itemView.findViewById(R.id.friend_status);
             unFriend=itemView.findViewById(R.id.un_friend);
+            online=itemView.findViewById(R.id.friends_online);
 
         }
 
-        public void bind(User user,String date){
-            try {
+        public void bind(User user,String date) throws ParseException {
+            if (getActivity()!=null){
             Glide.with(getActivity()).load(user.getImageUrl()).error(R.drawable.logo)
                     .into(userIMG);
             userName.setText(user.getName());
+            online.setImageResource(user.isOnline()?R.drawable.ic_online:R.drawable.ic_offline);
             String pattern = "yyyy-MM-dd";
             SimpleDateFormat sdf = new SimpleDateFormat(pattern, Locale.ENGLISH);
-
                 Date eDate = sdf.parse(date);
                 userStatus.setText(String.valueOf(eDate));
-
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
         }
     }

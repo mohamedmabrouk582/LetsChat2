@@ -24,6 +24,7 @@ public class MyApp extends Application {
    static   FirebaseAuth mAuth;
    static DatabaseReference mDatabaseReference;
    static StorageReference mStorageReference;
+   DatabaseReference databaseReference;
    DataManger manger;
 
     @Override
@@ -37,24 +38,27 @@ public class MyApp extends Application {
         manger=new DataManger(myshard);
         Log.d("token", FirebaseInstanceId.getInstance().getToken()+ "");
        // updateServerLisner();
+        if (mAuth.getCurrentUser() !=null) {
+            databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot != null) {
+                        databaseReference.child("online").onDisconnect().setValue(false);
+                        databaseReference.child("online").setValue(true);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
-    private void updateServerLisner(){
-        if (mAuth.getCurrentUser()==null) return;
-        mDatabaseReference.child("Users").child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user=dataSnapshot.getValue(User.class);
-                manger.clear();
-                manger.setUser(user.getName(),user.getEmail(),user.getImageUrl(),user.getStatus(),FirebaseInstanceId.getInstance().getToken());
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     public  DataManger getDataManger(){
         return manger;

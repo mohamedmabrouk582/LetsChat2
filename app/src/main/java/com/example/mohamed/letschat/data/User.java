@@ -15,8 +15,17 @@ public class User implements Parcelable {
     private String imageUrl;
     private String status;
     private String device_token;
+    private boolean online;
+    private Long lastSeen;
 
 
+    public Long getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(Long lastSeen) {
+        this.lastSeen = lastSeen;
+    }
 
     @Override
     public String toString() {
@@ -27,6 +36,14 @@ public class User implements Parcelable {
                 '}';
     }
 
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
 
     public String getDevice_token() {
         return device_token;
@@ -91,6 +108,8 @@ public class User implements Parcelable {
         dest.writeString(this.imageUrl);
         dest.writeString(this.status);
         dest.writeString(this.device_token);
+        dest.writeByte(this.online ? (byte) 1 : (byte) 0);
+        dest.writeValue(this.lastSeen);
     }
 
     protected User(Parcel in) {
@@ -99,6 +118,8 @@ public class User implements Parcelable {
         this.imageUrl = in.readString();
         this.status = in.readString();
         this.device_token = in.readString();
+        this.online = in.readByte() != 0;
+        this.lastSeen = (Long) in.readValue(Long.class.getClassLoader());
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {

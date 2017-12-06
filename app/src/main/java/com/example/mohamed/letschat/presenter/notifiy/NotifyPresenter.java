@@ -66,6 +66,8 @@ public class NotifyPresenter {
     }
 
 
+
+
    public void onMessageReceived(RemoteMessage remoteMessage){
        String currentProcess=getActivityManager().getRunningTasks(1).get(0).topActivity.getClassName();
        String currentFragment=dataManger.getFragment();

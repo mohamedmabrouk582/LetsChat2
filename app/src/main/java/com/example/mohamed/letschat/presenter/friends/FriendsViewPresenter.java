@@ -10,7 +10,11 @@ import com.example.mohamed.letschat.presenter.base.BasePresenter;
 import com.example.mohamed.letschat.view.FriendsView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by mohamed mabrouk
@@ -25,7 +29,7 @@ public class FriendsViewPresenter<v extends FriendsView> extends BasePresenter<v
 
     public FriendsViewPresenter(Activity activity){
         this.activity=activity;
-        mDatabaseReference=MyApp.getDatabaseReference().child("Friends");
+        mDatabaseReference=MyApp.getDatabaseReference();
         mAuth=MyApp.getmAuth();
     }
 
@@ -36,17 +40,16 @@ public class FriendsViewPresenter<v extends FriendsView> extends BasePresenter<v
     }
 
     @Override
-    public void unFriend(final String uerId, final requestListner listner) {
-      mDatabaseReference.child(mAuth.getCurrentUser().getUid()).child(uerId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-          @Override
-          public void onSuccess(Void aVoid) {
-           mDatabaseReference.child(uerId).child(mAuth.getCurrentUser().getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-               @Override
-               public void onSuccess(Void aVoid) {
-                   listner.onSucess();
-               }
-           });
-          }
-      });
+    public void unFriend(final String userid, final requestListner listner) {
+        Map friendsMap=new HashMap();
+        friendsMap.put("Friends/"+mAuth.getCurrentUser().getUid()+"/"+userid,null);
+        friendsMap.put("Friends/"+userid+"/"+mAuth.getCurrentUser().getUid(),null);
+
+        mDatabaseReference.updateChildren(friendsMap, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                listner.onSucess();
+            }
+        });
     }
 }

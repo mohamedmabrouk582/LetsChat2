@@ -81,6 +81,7 @@ public class LoginViewPresenter<v extends LoginView> extends BasePresenter<v> im
                 final String deviceToken= FirebaseInstanceId.getInstance().getToken();
                 Log.d("deviceToken", deviceToken+ "");
                 User user=dataSnapshot.getValue(User.class);
+
 //                if (!user.getDevice_token().equals(deviceToken) && !user.getDevice_token().equals("null")){
 //                   sendlogoutrequestFromDevice(dataManger.getUserId(),user,deviceToken,root);
 //
@@ -93,7 +94,7 @@ public class LoginViewPresenter<v extends LoginView> extends BasePresenter<v> im
                             dataManger.clear();
                             dataManger.setUserId(mAuth.getCurrentUser().getUid());
                             dataManger.setUser(user.getName(),user.getEmail(),user.getImageUrl(),user.getStatus(),user.getDevice_token());
-                            HomeActivity.Start(activity);
+                            HomeActivity.Start(activity,true);
                             activity.finish();
 
 
@@ -126,7 +127,7 @@ public class LoginViewPresenter<v extends LoginView> extends BasePresenter<v> im
                         dataManger.clear();
                         dataManger.setUserId(mAuth.getCurrentUser().getUid());
                         dataManger.setUser(user.getName(),user.getEmail(),user.getImageUrl(),user.getStatus(),user.getDevice_token());
-                        HomeActivity.Start(activity);
+                        HomeActivity.Start(activity,true);
                         activity.finish();
 
                     }

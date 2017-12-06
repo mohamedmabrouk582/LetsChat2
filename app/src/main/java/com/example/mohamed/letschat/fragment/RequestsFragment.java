@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -241,6 +242,7 @@ public class RequestsFragment extends Fragment implements RequestView {
         private TextView userName;
         public View view;
         public Button accept,cancel;
+        private ImageView online;
         @SuppressLint("WrongViewCast")
         public RequestsHolder(View itemView) {
             super(itemView);
@@ -249,24 +251,31 @@ public class RequestsFragment extends Fragment implements RequestView {
             userName=itemView.findViewById(R.id.user_name_req);
             accept=itemView.findViewById(R.id.accept_req);
             cancel=itemView.findViewById(R.id.cancel_req);
+            online=itemView.findViewById(R.id.request_online);
 
         }
 
         public void bind(User user,Request request){
-            String req_type=request.getRequest_type();
-            Glide.with(getActivity()).load(user.getImageUrl()).error(R.drawable.logo)
-                    .into(userIMG);
-            switch (req_type){
-                case "sent":
-                    mCurrentState="sent";
-                    accept.setVisibility(View.GONE);
-                    break;
-                case "received":
-                    mCurrentState="received";
-                    accept.setVisibility(View.VISIBLE);
-                    break;
+            try {
+                String req_type=request.getRequest_type();
+                online.setImageResource(user.isOnline()?R.drawable.ic_online:R.drawable.ic_offline);
+                Glide.with(getActivity()).load(user.getImageUrl()).error(R.drawable.logo)
+                        .into(userIMG);
+                switch (req_type){
+                    case "sent":
+                        mCurrentState="sent";
+                        accept.setVisibility(View.GONE);
+                        break;
+                    case "received":
+                        mCurrentState="received";
+                        accept.setVisibility(View.VISIBLE);
+                        break;
+                }
+                userName.setText(user.getName());
+            }catch (Exception  e){
+
             }
-            userName.setText(user.getName());
+
         }
     }
 }

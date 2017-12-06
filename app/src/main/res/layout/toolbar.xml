@@ -27,12 +27,27 @@
         android:id="@+id/toolbar_img"
         ></de.hdodenhof.circleimageview.CircleImageView>
 
-    <TextView
-        android:textColor="@color/white"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_marginLeft="@dimen/_10sdp"
         android:layout_gravity="center"
+        >
+    <TextView
+        android:layout_marginTop="@dimen/_3sdp"
+        android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/toolbar_user_name"
         />
+
+        <TextView
+            android:textSize="@dimen/_8sdp"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/last_seen"
+            />
+    </LinearLayout>
 </LinearLayout>

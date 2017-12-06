@@ -27,6 +27,6 @@ public class SplashViewPresenter<v extends SplashView> extends BasePresenter<v> 
 
     @Override
     public void openHomeActivity() {
-        HomeActivity.Start(context);
+        HomeActivity.Start(context,false);
     }
 }

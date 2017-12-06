@@ -15,6 +15,7 @@ import com.example.mohamed.letschat.presenter.splash.SplashViewPresenter;
 import com.example.mohamed.letschat.view.SplashView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
 /**
  * Created by mohamed mabrouk
@@ -28,6 +29,7 @@ public class SplashFragment extends Fragment implements SplashView{
     private FirebaseAuth mAuth;
     private SplashViewPresenter presenter;
     private DataManger dataManger;
+    private DatabaseReference mDatabaseReference;
 
     public static SplashFragment newFragment(){
         return new SplashFragment();
@@ -53,16 +55,23 @@ public class SplashFragment extends Fragment implements SplashView{
          dataManger=((MyApp) getActivity().getApplication()).getDataManger();
      }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
 
     @Override
     public void selectActivity() {
         FirebaseUser user=mAuth.getCurrentUser();
         if (user!=null){
             presenter.openHomeActivity();
+
         }else {
             dataManger.clear();
             presenter.openLoginActivity();
         }
         getActivity().finish();
     }
+
 }

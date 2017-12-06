@@ -12,6 +12,7 @@ public class ChatModel {
 
     public interface ChatListener{
         void onUpdateMSG(String msg);
+        void logout();
     }
    private ChatListener listener;
     public static ChatModel getInstance( ) {
@@ -31,6 +32,13 @@ public class ChatModel {
         if (listener!= null)
             listener.onUpdateMSG(s);
     }
+
+    public void logout(){
+        if (listener!= null)
+            listener.logout();
+    }
+
+
 
 
 }

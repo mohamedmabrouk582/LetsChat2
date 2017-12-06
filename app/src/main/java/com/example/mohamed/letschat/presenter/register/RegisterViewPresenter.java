@@ -90,7 +90,7 @@ public class RegisterViewPresenter<v extends RegisterView> extends BasePresenter
 
                         dataManger.setUser(name,email,"default","I am Use Let's Chat",device_token);
                         Log.d("tokenme", dataManger.getUser().getDevice_token() + "");
-                        HomeActivity.Start(activity);
+                        HomeActivity.Start(activity,true);
                         activity.finish();
                     }
                 });

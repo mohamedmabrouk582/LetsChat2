@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -184,6 +185,7 @@ public class AllUsersFragment extends Fragment implements AllUsersView{
         private CircleImageView userIMG;
         private TextView userName, userStatus;
         public View view;
+        private ImageView online;
         @SuppressLint("WrongViewCast")
         public UsersHolder(View itemView) {
             super(itemView);
@@ -191,11 +193,13 @@ public class AllUsersFragment extends Fragment implements AllUsersView{
             userIMG=itemView.findViewById(R.id.user_img_status);
             userName=itemView.findViewById(R.id.user_name);
             userStatus=itemView.findViewById(R.id.user_status);
+            online=itemView.findViewById(R.id.user_online);
 
         }
 
         public void bind(User user){
             //if (user.getImageUrl().length()>10){
+            online.setImageResource(user.isOnline()?R.drawable.ic_online:R.drawable.ic_offline);
             Glide.with(getActivity()).load(user.getImageUrl()).error(R.drawable.logo)
                     .into(userIMG);
             // }
