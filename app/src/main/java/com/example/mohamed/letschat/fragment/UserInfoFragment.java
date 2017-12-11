@@ -118,7 +118,7 @@ public class UserInfoFragment extends Fragment implements UserInfoView,View.OnCl
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.send_confirm_friend:
-                presenter.sendFriendRequest(userKey, mCurrent_state, new UserInfoPresenter.requestListner() {
+                presenter.sendFriendRequest(userKey, mCurrent_state,mUser, new UserInfoPresenter.requestListner() {
                     @Override
                     public void onSucess(String type) {
                        sendButton.setText(type);

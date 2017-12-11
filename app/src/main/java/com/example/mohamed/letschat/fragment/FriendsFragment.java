@@ -31,6 +31,7 @@ import com.example.mohamed.letschat.view.FriendsView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,6 +62,7 @@ public class FriendsFragment extends Fragment implements FriendsView {
     private Query query;
     private DataManger dataManger;
     private String mCurrentState="sent";
+    private User user;
     private DatabaseReference mReference;
     @Nullable
     @Override
@@ -161,6 +163,10 @@ public class FriendsFragment extends Fragment implements FriendsView {
 
             @Override
             protected void onBindViewHolder(final FriendsHolder holder, final int position, final String model) {
+
+
+
+
                 mReference.child(options.getSnapshots().getSnapshot(position).getKey()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -243,7 +249,7 @@ public class FriendsFragment extends Fragment implements FriendsView {
         }
 
         public void bind(User user,String date) throws ParseException {
-            if (getActivity()!=null){
+            if (getActivity()!=null && user !=null){
             Glide.with(getActivity()).load(user.getImageUrl()).error(R.drawable.logo)
                     .into(userIMG);
             userName.setText(user.getName());

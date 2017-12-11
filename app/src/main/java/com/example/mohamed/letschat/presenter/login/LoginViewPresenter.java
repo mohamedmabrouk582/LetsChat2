@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.onesignal.OneSignal;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,20 +87,27 @@ public class LoginViewPresenter<v extends LoginView> extends BasePresenter<v> im
 //                   sendlogoutrequestFromDevice(dataManger.getUserId(),user,deviceToken,root);
 //
 //                }else {
-                    mDatabaseReference.child("Users").child(root).child("device_token").setValue(deviceToken).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            getView().hideProgress();
-                            User user=dataSnapshot.getValue(User.class);
-                            dataManger.clear();
-                            dataManger.setUserId(mAuth.getCurrentUser().getUid());
-                            dataManger.setUser(user.getName(),user.getEmail(),user.getImageUrl(),user.getStatus(),user.getDevice_token());
-                            HomeActivity.Start(activity,true);
-                            activity.finish();
+                OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+                    @Override
+                    public void idsAvailable(String userId, String registrationId) {
+                        mDatabaseReference.child("Users").child(root).child("device_token").setValue(userId).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                getView().hideProgress();
+                                User user=dataSnapshot.getValue(User.class);
+                                dataManger.clear();
+                                dataManger.setUserId(mAuth.getCurrentUser().getUid());
+                                dataManger.setUser(user.getName(),user.getEmail(),user.getImageUrl(),user.getStatus(),user.getDevice_token());
+                                HomeActivity.Start(activity,true);
+                                activity.finish();
 
 
-                        }
-                    });
+                            }
+                        });
+                    }
+                });
+
+
                 }
 
           //  }

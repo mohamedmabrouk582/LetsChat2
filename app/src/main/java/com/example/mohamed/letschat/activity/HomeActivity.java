@@ -6,6 +6,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -82,7 +84,17 @@ public class HomeActivity extends AppCompatActivity
     public static void Start(Context context,boolean fromLogin){
         Intent intent=new Intent(context,HomeActivity.class);
         intent.putExtra("fromlogin",fromLogin);
-        context.startActivity(intent);
+        if (fromLogin){
+            int mPendingIntentId = 123456;
+            PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId,intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis()+100, mPendingIntent);
+            System.exit(0);
+        }else {
+            context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+
+        }
+
     }
 
     @Override
@@ -162,7 +174,6 @@ public class HomeActivity extends AppCompatActivity
         super.onStop();
         if (FirebaseAuth.getInstance().getCurrentUser()!=null){
             MyApp.getDatabaseReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("lastSeen").setValue(ServerValue.TIMESTAMP);
-
         }
 
     }

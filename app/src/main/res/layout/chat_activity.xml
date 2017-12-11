@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    <include layout="@layout/toolbar"/>
+ <android.support.v4.widget.SwipeRefreshLayout
+     android:id="@+id/srl"
+     android:layout_width="match_parent"
+     android:layout_height="0dp"
+     android:layout_weight="1"
+     >
+     <android.support.v7.widget.RecyclerView
+         android:id="@+id/users_recycler_view"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:clipToPadding="false"
+         android:paddingBottom="10sp"
+         android:scrollbars="vertical"/>
+
+ </android.support.v4.widget.SwipeRefreshLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/_5sdp"
+        android:background="@drawable/send_shape"
+        android:layout_margin="@dimen/_5sdp"
+        >
+        <EditText
+            android:id="@+id/massage"
+            android:paddingLeft="10dp"
+            android:textAllCaps="false"
+            android:textSize="@dimen/_13sdp"
+            android:hint="@string/massage"
+            android:paddingBottom="@dimen/_5sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingRight="@dimen/_5sdp"
+            android:background="@android:color/transparent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+        <ImageView
+            android:id="@+id/send"
+            android:padding="@dimen/_2sdp"
+            android:layout_gravity="center"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:src="@drawable/ic_send"
+            />
+    </LinearLayout>
+
+</LinearLayout>

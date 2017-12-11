@@ -11,16 +11,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.mohamed.letschat.R;
 import com.example.mohamed.letschat.application.MyApp;
 import com.example.mohamed.letschat.data.Chat;
@@ -32,6 +32,7 @@ import com.example.mohamed.letschat.view.ChatView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,10 +44,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static java.text.DateFormat.getDateTimeInstance;
 
@@ -67,10 +64,12 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
     private FirebaseRecyclerAdapter adapter;
     private ChatViewPresenter presenter;
     private DatabaseReference mDatabaseReference;
+    private FirebaseAuth mAuth;
     private DatabaseReference mReference;
     private String userKey;
     private User mUser;
-    private  ToolBar.ToolBarBuilder builder;
+    private ToolBar.ToolBarBuilder builder;
+    private LinearLayoutManager manager;
 
 
     public static Intent newIntent(Context context,User user,String userKey){
@@ -82,26 +81,28 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.chat_fragment);
+        setContentView(R.layout.chat_activity);
         presenter=new ChatViewPresenter(this);
         presenter.attachView(this);
         init();
         iniRecyl();
         iniSwipe();
+        showMassages();
     }
 
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        MyApp.getDatabaseReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("online").setValue(true);
-//
-//    }
-//
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+
         MyApp.getDatabaseReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("lastSeen").setValue(ServerValue.TIMESTAMP);
+
     }
 
     public static String getTimeDate(long timeStamp){
@@ -119,10 +120,10 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
         mUser=getIntent().getParcelableExtra(USER);
         send=findViewById(R.id.send);
         massageEditText=findViewById(R.id.massage);
-
-        mDatabaseReference= MyApp.getDatabaseReference().child("Chats");
+        mAuth=MyApp.getmAuth();
+        mDatabaseReference= MyApp.getDatabaseReference().child("Chats").child(mAuth.getUid()).child(userKey);
         mReference=MyApp.getDatabaseReference().child("Users");
-        query=mDatabaseReference.limitToFirst(50);
+        query=mDatabaseReference.limitToLast(50).orderByChild("date");
         setToolbar();
 
         send.setOnClickListener(new View.OnClickListener() {
@@ -157,7 +158,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
                      try {
                          User user=dataSnapshot.getValue(User.class);
 
-                         builder.setLastSeen(user.isOnline()?"online":getTimeDate(mUser.getLastSeen())).build();
+                         builder.setLastSeen(user.isOnline()?"online":MyApp.getTimeAgo(mUser.getLastSeen(),getBaseContext())).build();
 
                      }catch (Exception e){}
                   }
@@ -174,7 +175,10 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
 
     private void iniRecyl(){
         mRecyclerView=findViewById(R.id.users_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+         manager=new LinearLayoutManager(this);
+       // manager.setReverseLayout(true);
+        manager.setStackFromEnd(true);
+        mRecyclerView.setLayoutManager(manager);
     }
 
     private void iniSwipe(){
@@ -233,12 +237,52 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
             @Override
             protected void onBindViewHolder(ChatHolder holder, int position, Chat model) {
                holder.bind(model);
+                Log.d("count", adapter.getItemCount() + "");
             }
         };
 
-        mRecyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
 
+         messageUpdate();
+        mRecyclerView.setAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
+    }
+
+
+    private void messageUpdate(){
+        mDatabaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                try {
+                    mRecyclerView.scrollToPosition(adapter.getItemCount()-1);
+                }catch (Exception e){}            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                try {
+                    mRecyclerView.scrollToPosition(adapter.getItemCount()-1);
+                }catch (Exception e){}
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                try {
+                    mRecyclerView.scrollToPosition(adapter.getItemCount()-1);
+                }catch (Exception e){}
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                try {
+                    mRecyclerView.scrollToPosition(adapter.getItemCount()-1);
+                }catch (Exception e){}
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -248,13 +292,15 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
         if (TextUtils.isEmpty(msg)){
 
         }else {
-            presenter.send(msg, userKey, new ChatPresenter.responseLisnter() {
+            presenter.send(msg, userKey,mUser, new ChatPresenter.responseLisnter() {
                 @Override
                 public void sucess() {
                     massageEditText.setText(null);
                     massageEditText.setHint(R.string.massage);
-
-//                    adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
+                    try {
+                        mRecyclerView.scrollToPosition(adapter.getItemCount()-1);
+                    }catch (Exception e){}
                 }
             });
 
@@ -283,17 +329,33 @@ public class ChatActivity extends AppCompatActivity implements ChatView{
         public void bind(Chat chat){
            if (chat.getFrom().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                // i  send
+               try{
+
+
                received.setVisibility(View.GONE);
                send.setVisibility(View.VISIBLE);
                send_msg.setText(chat.getMsg());
-               send_time.setText(chat.getDate());
+               Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(chat.getDate());
+               String formattedDate = new SimpleDateFormat("hh:mm a").format(date);
+               send_time.setText(formattedDate);
+               }catch (Exception e){
+
+               }
 
            }else {
                // i received
-               send.setVisibility(View.GONE);
-               received.setVisibility(View.VISIBLE);
-               rec_msg.setText(chat.getMsg());
-               rec_time.setText(chat.getDate());
+
+               try {
+                   send.setVisibility(View.GONE);
+                   received.setVisibility(View.VISIBLE);
+                   rec_msg.setText(chat.getMsg());
+                   Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(chat.getDate());
+                   String formattedDate = new SimpleDateFormat("hh:mm a").format(date);
+                   rec_time.setText(formattedDate);
+               } catch (ParseException e) {
+                   e.printStackTrace();
+               }
+
            }
         }
     }

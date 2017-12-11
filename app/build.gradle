@@ -3,6 +3,10 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
+        applicationId "com.example.mohamed.onsignalapp"
+        manifestPlaceholders = [onesignal_app_id: "a4652034-ccd0-48cd-813f-f480039c7bb0",
+                                // Project number pulled from dashboard, local value is ignored.
+                                onesignal_google_project_number: "REMOTE"]
         applicationId "com.example.mohamed.letschat"
         minSdkVersion 16
         targetSdkVersion 26
@@ -61,6 +65,9 @@ dependencies {
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.5.+'
     implementation 'com.google.code.gson:gson:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.onesignal:OneSignal:[3.6.5, 3.99.99]'
+  //  compile 'com.onesignal:OneSignal:3.+@aar'
+
 
 }
 

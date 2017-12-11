@@ -29,6 +29,7 @@ import com.example.mohamed.letschat.view.RequestView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -149,9 +150,11 @@ public class RequestsFragment extends Fragment implements RequestView {
 
                 return new RequestsHolder(view);
             }
+            //TODO
 
             @Override
             protected void onBindViewHolder(final RequestsHolder holder, final int position, final Request model) {
+//
 
               mReference.child(options.getSnapshots().getSnapshot(position).getKey()).addValueEventListener(new ValueEventListener() {
                   @Override

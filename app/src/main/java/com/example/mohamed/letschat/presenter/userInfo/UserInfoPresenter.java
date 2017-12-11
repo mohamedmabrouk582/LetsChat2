@@ -16,7 +16,7 @@ public interface UserInfoPresenter<v extends UserInfoView> extends MainPresenter
     interface requestListner{
         void onSucess(String type);
     }
-    void sendFriendRequest(String userid,String requestTYPE,requestListner listner);
+    void sendFriendRequest(String userid,String requestTYPE,User user,requestListner listner);
     void stateRequest(String userid,requestListner listner);
     void reject(String userid,requestListner listner);
 }

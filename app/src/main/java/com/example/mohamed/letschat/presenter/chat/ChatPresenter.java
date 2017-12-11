@@ -1,5 +1,6 @@
 package com.example.mohamed.letschat.presenter.chat;
 
+import com.example.mohamed.letschat.data.User;
 import com.example.mohamed.letschat.presenter.base.MainPresenter;
 import com.example.mohamed.letschat.view.ChatView;
 
@@ -13,5 +14,5 @@ public interface ChatPresenter<v extends ChatView> extends MainPresenter<v> {
     interface  responseLisnter{
         void sucess();
     }
-    void send(String msg,String to,responseLisnter lisnter);
+    void send(String msg, String to, User user, responseLisnter lisnter);
 }

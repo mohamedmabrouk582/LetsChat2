@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.mohamed.letschat.R;
+import com.example.mohamed.letschat.activity.ChatActivity;
 import com.example.mohamed.letschat.activity.HomeActivity;
 import com.example.mohamed.letschat.activity.MyDialog;
 import com.example.mohamed.letschat.activity.UserInfoActivity;
@@ -23,9 +24,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.RemoteMessage;
-import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -68,25 +69,22 @@ public class NotifyPresenter {
 
 
 
-   public void onMessageReceived(RemoteMessage remoteMessage){
+   public void onMessageReceived(String type,String title, String body,String from){
        String currentProcess=getActivityManager().getRunningTasks(1).get(0).topActivity.getClassName();
        String currentFragment=dataManger.getFragment();
        Log.d("currentProcess", currentProcess+ " : "+currentFragment);
-       String type=remoteMessage.getData().get("type");
-       String title=remoteMessage.getData().get("title");
-       String body=remoteMessage.getData().get("body");
-       String from=remoteMessage.getData().get("from_user_id");
-       Log.d("payload", remoteMessage.getData()+ "");
-       Log.d("type", type + " : "+title +" : "+body+" : "+from);
-
        if (type.equals("1")){
            if (currentProcess.equals(bkn+"HomeActivity") && currentFragment.equals("Requests")){
              Log.d("where", "i am here" + "");
            }else {
-               startRequest(from,title,body);
+               Log.d("ooo", "ooo" + "");
+               startRequest(from,title,body,"1");
                //sendNotification(title,body,new Intent(context,HomeActivity.class));
            }
        }else if (type.equals("2")){
+           if (!currentProcess.equals(bkn+"ChatActivity")){
+               startRequest(from,title,body,"2");
+           }
 
        }else if (type.equals("-1")){
            Log.d("logout", "gggg" + "");
@@ -175,13 +173,17 @@ public class NotifyPresenter {
     }
 
 
-    private void startRequest(final String userkey, final String title, final String body){
+    private void startRequest(final String userkey, final String title, final String body, final String type){
        mDatabaseReference.child(userkey).addValueEventListener(new ValueEventListener() {
            @Override
            public void onDataChange(DataSnapshot dataSnapshot) {
                User user=dataSnapshot.getValue(User.class);
-               sendNotification(title,body, UserInfoActivity.newIntent(context,user,userkey,false));
+               if (type.equals("1")){
+                   sendNotification(title,body, UserInfoActivity.newIntent(context,user,userkey,false));
 
+               }else {
+                   sendNotification(title,body, ChatActivity.newIntent(context,user,userkey));
+               }
            }
 
            @Override
