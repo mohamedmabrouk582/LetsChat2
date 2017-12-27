@@ -250,7 +250,7 @@ public class FriendsFragment extends Fragment implements FriendsView {
 
         public void bind(User user,String date) throws ParseException {
             if (getActivity()!=null && user !=null){
-            Glide.with(getActivity()).load(user.getImageUrl()).error(R.drawable.logo)
+            Glide.with(getActivity()).load(user.getImageUrl())
                     .into(userIMG);
             userName.setText(user.getName());
             online.setImageResource(user.isOnline()?R.drawable.ic_online:R.drawable.ic_offline);

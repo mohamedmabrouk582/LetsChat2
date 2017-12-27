@@ -145,7 +145,7 @@ public class HomeActivity extends AppCompatActivity
             Log.d("sdsd", data.getImageUrl() + "");
           //  mProfileImge.setImageURI(Uri.parse(data.getImageUrl()));
 
-            Glide.with(this).load(data.getImageUrl()).error(R.drawable.logo)
+            Glide.with(this).load(data.getImageUrl())
                     .into(mProfileImge);
         }
     }

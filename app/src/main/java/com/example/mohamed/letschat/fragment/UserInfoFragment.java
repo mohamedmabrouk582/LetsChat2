@@ -105,7 +105,7 @@ public class UserInfoFragment extends Fragment implements UserInfoView,View.OnCl
     }
 
     private void setData(User data){
-        Glide.with(getActivity()).load(data.getImageUrl()).error(R.drawable.logo).into(userIMG);
+        Glide.with(getActivity()).load(data.getImageUrl()).into(userIMG);
         userStatus.setText(data.getStatus());
         userName.setText(data.getName());
 

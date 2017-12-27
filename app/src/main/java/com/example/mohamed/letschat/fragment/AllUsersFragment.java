@@ -200,7 +200,7 @@ public class AllUsersFragment extends Fragment implements AllUsersView{
         public void bind(User user){
             //if (user.getImageUrl().length()>10){
             online.setImageResource(user.isOnline()?R.drawable.ic_online:R.drawable.ic_offline);
-            Glide.with(getActivity()).load(user.getImageUrl()).error(R.drawable.logo)
+            Glide.with(getActivity()).load(user.getImageUrl())
                     .into(userIMG);
             // }
 

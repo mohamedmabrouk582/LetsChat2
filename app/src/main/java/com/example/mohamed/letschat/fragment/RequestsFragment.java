@@ -262,7 +262,7 @@ public class RequestsFragment extends Fragment implements RequestView {
             try {
                 String req_type=request.getRequest_type();
                 online.setImageResource(user.isOnline()?R.drawable.ic_online:R.drawable.ic_offline);
-                Glide.with(getActivity()).load(user.getImageUrl()).error(R.drawable.logo)
+                Glide.with(getActivity()).load(user.getImageUrl())
                         .into(userIMG);
                 switch (req_type){
                     case "sent":

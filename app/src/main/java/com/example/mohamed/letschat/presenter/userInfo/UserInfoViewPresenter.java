@@ -88,7 +88,7 @@ public class UserInfoViewPresenter<v extends UserInfoView> extends BasePresenter
 
                                 @Override
                                 public void onFailure(JSONObject response) {
-
+                                     Log.d("fail", response.toString()+ "");
                                 }
                             });
 

@@ -124,7 +124,7 @@ public class ToolBar {
            lastseenTextView.setText(toolBar.getLastSeen());
          titleView.setText(toolBar.getTitle());
            if (!TextUtils.isEmpty(toolBar.getImg())){
-               Glide.with(context).load(toolBar.getImg()).error(R.drawable.logo).into(circleImageView);
+               Glide.with(context).load(toolBar.getImg()).into(circleImageView);
            }
        }
 

@@ -32,7 +32,6 @@ public class ZoomIMG {
             mCurrentAnimator.cancel();
         }
         Glide.with(activity).load(Uri.parse(imageResId))
-                .error(R.drawable.logo)
                 .into(img_preview);
         // zoomIMG.setImageResource(imageResId);
         final Rect startBounds = new Rect();
